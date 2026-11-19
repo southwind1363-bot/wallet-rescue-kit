@@ -14,7 +14,7 @@ WebページのパターンBが使えない場合の、最終手段です。
 コマンドを打って使う場合は、キットのフォルダで：
 
 ```
-python -m pip install web3 eth-account
+python -m pip install web3==8.0.0 eth-account==0.14.0
 python guided_rescue.py
 ```
 
