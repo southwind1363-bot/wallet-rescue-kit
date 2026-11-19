@@ -1,0 +1,963 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
+<title>ウォレット救出キット（デスクトップ用・オールインワン）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.4/dist/ethers.umd.min.js"></script>
+
+
+<style>
+:root{
+  --bg:#eef2f5; --surface:#ffffff; --surface2:#f7f9fa; --text:#13202a; --muted:#5b6b7a; --line:#dbe3e8;
+  --teal:#0e7569; --teal-dark:#0a5c53; --teal-soft:#e6f4f1; --amber:#b45309; --amber-soft:#fef3c7; --red:#b42318; --red-soft:#fef2f2; --green:#067647; --green-soft:#ecfdf3;
+  --navy:#102a3a; --radius:18px; --code-bg:#0f2231; --code-text:#d9f2ea;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0c141a; --surface:#16222c; --surface2:#1b2b38; --text:#e8eef2; --muted:#9fb0bd; --line:#2a3d4c; --teal:#2dd4bf; --teal-dark:#5eead4; --teal-soft:#12332f; --amber-soft:#3a2e12; --red-soft:#3a1a18; --green-soft:#123324; --navy:#e8eef2; --code-bg:#0a1822; }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Noto Sans JP",system-ui,-apple-system,"Hiragino Sans",sans-serif;background:var(--bg);color:var(--text);line-height:1.75}
+a{color:var(--teal);text-underline-offset:3px}
+button,select,input,textarea{font:inherit}
+button,select,input{min-height:48px}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 56px}
+.hero{background:var(--navy);color:#fff;border-radius:24px;padding:36px 36px 30px;display:grid;grid-template-columns:1.35fr .65fr;gap:28px;overflow:hidden}
+@media(prefers-color-scheme: dark){.hero{background:#1b2f40}}
+.hero h1{font-size:clamp(27px,4vw,42px);line-height:1.2;margin:0 0 14px;letter-spacing:-.02em;font-weight:900}
+.hero h1 span{color:#5eead4}
+.hero p{margin:0;color:#d6e2ea;font-size:16px;max-width:36em}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;padding:7px 12px;border-radius:999px;font-size:13px;font-weight:700}
+.badge i{width:8px;height:8px;border-radius:50%;background:#34d399;display:block;flex:0 0 8px}
+.hero-card{background:#fff;color:#13202a;border-radius:18px;padding:20px}
+@media(prefers-color-scheme: dark){.hero-card{background:#0f1d27;color:#e8eef2}}
+.hero-card h3{margin:0 0 10px;font-size:15px}
+.hero-card ol,.hero-card ul{margin:0;padding-left:20px;font-size:14.5px;color:var(--muted)}
+.hero-card li+li{margin-top:6px}
+.hero-card strong{color:var(--text)}
+.layout{display:grid;grid-template-columns:1fr 350px;gap:20px;margin-top:20px;align-items:start}
+@media(max-width:900px){.hero,.layout{grid-template-columns:1fr}.hero{padding:26px 22px}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+.card + .card{margin-top:20px}
+.card h2{font-size:22px;margin:0 0 6px;line-height:1.35}
+.card h2 .num{display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--teal);color:#fff;align-items:center;justify-content:center;font-size:16px;vertical-align:2px;margin-right:8px;flex:0 0 34px}
+.sub{color:var(--muted);margin:0 0 18px;font-size:14.5px}
+.label{font-weight:700;font-size:14px;margin:18px 0 8px;display:block}
+.chain-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.chain{border:2px solid var(--line);background:var(--surface2);border-radius:14px;padding:12px;text-align:left;cursor:pointer;min-height:64px}
+.chain b{display:block;font-size:16px;line-height:1.2}
+.chain span{font-size:12.5px;color:var(--muted)}
+.chain[aria-pressed="true"]{border-color:var(--teal);background:var(--teal-soft);box-shadow:0 0 0 3px color-mix(in srgb,var(--teal) 18%, transparent)}
+.addr-row{display:flex;gap:10px;flex-wrap:wrap}
+.addr-row input{flex:1;min-width:240px;border:2px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface);color:var(--text);font-family:ui-monospace,monospace;font-size:15px}
+.addr-row input:focus,.txtin:focus{outline:3px solid color-mix(in srgb,var(--teal) 30%, transparent);border-color:var(--teal)}
+.txtin{width:100%;border:2px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface);color:var(--text);font-size:15px}
+.txtin.mono{font-family:ui-monospace,monospace;font-size:13.5px}
+.btn{border:0;border-radius:12px;padding:12px 22px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-size:15.5px;text-align:center}
+.btn-primary{background:var(--teal);color:#fff;min-width:170px;font-size:16.5px}
+.btn-primary:hover{background:var(--teal-dark)}
+.btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--line)}
+.btn-danger{background:var(--red);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-sm{min-height:42px;padding:8px 16px;font-size:14px;min-width:0}
+.hint{font-size:13px;color:var(--muted);margin-top:8px}
+.error{display:none;background:var(--red-soft);border:1px solid #fecdca;color:var(--red);border-radius:12px;padding:12px 14px;margin-top:14px;font-weight:700;font-size:14px}
+.okbox{display:none;background:var(--green-soft);border:1px solid #a6f4c5;color:var(--text);border-radius:12px;padding:12px 14px;margin-top:14px;font-size:14px}
+.empty{margin-top:22px;border:2px dashed var(--line);border-radius:16px;padding:28px;text-align:center;color:var(--muted);background:var(--surface2)}
+.empty b{color:var(--text);display:block;font-size:17px;margin-bottom:4px}
+.results{display:none;margin-top:22px}
+.verdict{border-radius:16px;padding:20px;display:flex;gap:16px;align-items:flex-start}
+.verdict.ok{background:var(--green-soft);border:1px solid #a6f4c5}
+.verdict.warn{background:var(--amber-soft);border:1px solid #fedf89}
+.verdict.danger{background:var(--red-soft);border:1px solid #fecdca}
+.verdict .icon{font-size:28px;line-height:1}
+.verdict h3{margin:0 0 4px;font-size:19px}
+.verdict p{margin:0;font-size:14.5px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.chain-row{grid-template-columns:1fr}}
+.stat{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:16px}
+.stat label{font-size:12px;letter-spacing:.04em;color:var(--muted);font-weight:700}
+.stat .val{font-size:21px;font-weight:900;line-height:1.3;word-break:break-all}
+.stat .note{font-size:13px;color:var(--muted)}
+.mono{font-family:ui-monospace,monospace;font-size:13.5px!important;font-weight:600!important;word-break:break-all}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.side{position:sticky;top:20px;max-height:calc(100vh - 40px);overflow-y:auto;padding-right:4px;scrollbar-width:thin}
+@media(max-width:900px){.side{position:static;max-height:none;overflow:visible}}
+.safe{background:#102a3a;color:#fff;border-radius:var(--radius);padding:24px}
+@media(prefers-color-scheme: dark){.safe{background:#1b2f40}}
+.safe h2{font-size:19px;margin:0 0 12px}
+.safe ul{margin:0;padding-left:19px;color:#d6e2ea;font-size:14.5px}
+.safe li+li{margin-top:8px}
+.safe strong{color:#fff}
+.note-box{background:var(--amber-soft);border:1px solid #fedf89;border-radius:14px;padding:16px 18px;font-size:14.5px;margin:14px 0}
+.note-box b{color:var(--text)}
+.teal-box{background:var(--teal-soft);border:1px solid color-mix(in srgb,var(--teal) 35%, transparent);border-radius:14px;padding:16px 18px;font-size:14.5px;margin:14px 0}
+.red-box{background:var(--red-soft);border:1px solid #fecdca;border-radius:14px;padding:16px 18px;font-size:14.5px;margin:14px 0}
+.why{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:14px 0;font-size:14.5px}
+.why h4{margin:0 0 6px;font-size:14px;color:var(--teal)}
+.why p{margin:0;color:var(--muted)}
+.why p + p{margin-top:6px}
+.why strong{color:var(--text)}
+.do-list{margin:10px 0 0;padding-left:22px;font-size:14.5px}
+.do-list li+li{margin-top:7px}
+.do-list .mm{color:var(--muted);font-size:13.5px;display:block}
+.term{border-bottom:2px dotted var(--teal);font-weight:700}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+@media(max-width:760px){.flow{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:430px){.flow{grid-template-columns:1fr}}
+.flow div{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:13.5px}
+.flow b{display:block;font-size:14.5px;margin-bottom:2px}
+.flow span{color:var(--muted)}
+.gloss{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.gloss{grid-template-columns:1fr}}
+.gloss div{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.gloss b{display:block;margin-bottom:3px}
+.gloss p{margin:0;color:var(--muted);font-size:13.5px}
+.prep{list-style:none;margin:0;padding:0}
+.prep li{display:flex;gap:12px;padding:13px 0;border-top:1px solid var(--line);font-size:14.5px}
+.prep li:first-child{border-top:0}
+.prep .n{flex:0 0 30px;width:30px;height:30px;border-radius:50%;background:var(--teal-soft);color:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;margin-top:2px}
+.prep p{margin:0;color:var(--muted);font-size:13.5px}
+.prep strong{color:var(--text)}
+.status-line{display:flex;gap:10px;align-items:flex-start;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;margin-top:12px;word-break:break-all}
+.status-line .dot{flex:0 0 12px;width:12px;height:12px;border-radius:50%;background:#b6c2cc;margin-top:6px}
+.status-line.on .dot{background:#12b76a}
+.status-line.warn .dot{background:#f79009}
+.log{background:var(--code-bg);color:var(--code-text);border-radius:12px;padding:14px 16px;font-family:ui-monospace,monospace;font-size:12.5px;line-height:1.65;white-space:pre-wrap;word-break:break-all;max-height:300px;overflow:auto;margin-top:12px;display:none}
+.nft-list{display:grid;gap:10px;margin-top:14px}
+.nft-item{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px;display:grid;grid-template-columns:1fr auto;gap:6px 12px}
+.nft-item b{font-size:14.5px}
+.nft-item .c{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted);word-break:break-all;grid-column:1/-1}
+.nft-item .tag{font-size:11.5px;font-weight:800;background:var(--teal-soft);color:var(--teal);border-radius:999px;padding:3px 9px;height:fit-content}
+details.faqd, .faq details{border-top:1px solid var(--line);padding:14px 0}
+summary{font-weight:700;cursor:pointer;min-height:36px;display:flex;align-items:center;gap:6px}
+.faq p, details.faqd p{color:var(--muted);margin:6px 0 0;font-size:14.5px}
+.desktop-guide{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:700px){.desktop-guide{grid-template-columns:1fr}}
+.method{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:18px}
+.method h3{margin:0 0 8px;font-size:16px}
+.method ol{margin:0;padding-left:20px;font-size:14.5px;color:var(--muted)}
+.prog{list-style:none;margin:0;padding:0;font-size:14px}
+.prog li{padding:8px 0;border-top:1px solid var(--line)}
+.prog li:first-child{border-top:0}
+.prog a{text-decoration:none;font-weight:700}
+.prog span{color:var(--muted);display:block;font-size:12.5px}
+.scope{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+@media(max-width:640px){.scope{grid-template-columns:1fr}}
+.scope div{border-radius:14px;padding:18px;font-size:14.5px}
+.scope-ok{background:var(--green-soft);border:1px solid #a6f4c5}
+.scope-ng{background:var(--red-soft);border:1px solid #fecdca}
+.scope h3{margin:0 0 8px;font-size:17px}
+.scope ul{margin:0;padding-left:20px}
+.scope li+li{margin-top:6px}
+.foot{margin-top:20px;text-align:center;color:var(--muted);font-size:13px;padding:0 10px}
+.spin{width:18px;height:18px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:sp 0.8s linear infinite;display:none;flex:0 0 18px}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+
+</style>
+<style>
+/* step-flow v4 (added 2026-11-19) */
+.stepsec{display:none}
+.stepsec.active{display:block}
+body.showall .stepsec{display:block}
+#practice.gd-hidden{display:none}
+.gd-head{position:sticky;top:0;z-index:40;display:grid;gap:8px;margin:0 0 14px}
+.gd-modebar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 4px 14px rgba(20,30,60,.06)}
+.gd-modebar .cap{font-size:12.5px;color:var(--muted);font-weight:700}
+.gd-mbtn{border:1.5px solid var(--line);background:var(--surface);color:var(--text);border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:700;cursor:pointer}
+.gd-mbtn.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.gd-reset{margin-left:auto;border:1.5px solid #e5b1b1;background:#fdf1f1;color:#b03030;border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:700;cursor:pointer}
+.gd-bar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--surface);border-top:2px solid var(--teal);box-shadow:0 -6px 20px rgba(20,30,60,.12);padding:12px 14px calc(12px + env(safe-area-inset-bottom))}
+.gd-bar-in{max-width:1060px;margin:0 auto;display:grid;gap:8px}
+.gd-prog{font-size:12px;color:var(--muted);font-weight:700}
+.gd-text{font-size:17px;font-weight:700;line-height:1.5}
+.gd-btns{display:flex;gap:10px}
+.gd-btns .btn{flex:1}
+body.guide{padding-bottom:170px}
+body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{display:none}
+.gd-hl{outline:3px solid var(--amber);outline-offset:3px;border-radius:8px}
+.side .prog a.gd-cur{color:var(--teal);font-weight:800}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <h1>ウォレット救出キット<br><span>デスクトップ版・オールインワン</span></h1>
+      <p>このページで、ウォレットの確認と「進み方の選択」を行います。実行は、状況に合わせて2つの方法（パターンA／パターンB）から選びます。上から順番に進めるウィザード形式です。誰でも迷わないよう、各ステップに「なぜやるのか」「ボタンを押すと何が起きるか」「MetaMaskの画面で何を確認するか」「失敗したらどうするか」まで細かく書いてあります。<strong style="color:#fff">なお、救出できるのは「まだウォレットに残っている分」だけです。すでに攻撃者のウォレットへ移された分は、この方法では戻せません。</strong>詳しくはすぐ下の早見表を見てください。</p>
+      <div class="badges">
+        <span class="badge"><i></i> 確認と選択はこのページで</span>
+        <span class="badge"><i></i> 進み方は2つから選択</span>
+        <span class="badge"><i></i> 秘密鍵の入力欄なし</span>
+        
+        <span class="badge"><i></i> 誰でも使えます</span>
+      </div>
+    </div>
+    <aside class="hero-card">
+      <h3>📖 このページの使い方（最初に読んでください）</h3>
+      <ol>
+        <li>あわてないでください。<strong>上から順番に</strong>進めれば大丈夫です。途中のステップを飛ばさないでください</li>
+        <li>確認（ステップ1・2）は、どこで開いてもできます。実行は、選んだパターンの案内に沿って進めます（パターンAはPCの専用キット、パターンBはMetaMaskの中）</li>
+        <li><strong>秘密鍵・シードフレーズを入力する欄は、このページのどこにもありません。</strong>もし入力を求める画面が出たら、それは偽物です。すぐ閉じてください</li>
+        <li>分からない言葉が出たら、その場に短い言い換えを書いてあります。下の「言葉の説明」にもまとめてあります</li>
+      </ol>
+    </aside>
+  </section>
+
+  <div class="layout">
+    <main>
+      <!-- SCOPE: what can / cannot be rescued -->
+      <section class="card">
+        <h2>最初に確認：救出できる分／戻せない分</h2>
+        <p class="sub">このキットは「盗まれたものを何でも取り戻す」ものではありません。できることと、原理的にできないことを、始める前に分けておきます。</p>
+        <div class="scope">
+          <div class="scope-ok">
+            <h3>✅ 救出できる分</h3>
+            <ul>
+              <li><strong>まだ被害ウォレットに残っているNFT</strong> — 委任を付け替えて移転の許可を取り戻し、安全なウォレットへ移せます</li>
+              <li><strong>攻撃者が付けた委任の付け替え・解除</strong> — 本人が鍵／シードフレーズをまだ知っている場合に限ります</li>
+              <li>委任を解除した後に残っているトークンなどの通常送金（資産の状態によります）</li>
+            </ul>
+          </div>
+          <div class="scope-ng">
+            <h3>❌ 戻せない分</h3>
+            <ul>
+              <li><strong>すでに攻撃者のウォレットへ移されたNFT・資産</strong> — 移転には今の所有者の承認が必要で、攻撃者が承認することはありません</li>
+              <li><strong>転売されて第三者に渡ったNFT</strong> — この方法では取り戻せません（追跡やマーケットへの通報は別の対応になります）</li>
+              <li><strong>鍵もシードフレーズも完全に失った場合</strong> — 本人の署名が作れないため、救出できません</li>
+            </ul>
+          </div>
+        </div>
+        <div class="note-box" style="margin-bottom:0"><b>だから勝負は速さです：</b>乗っ取りに気づいたら、攻撃者が残っているNFTを抜く前に手続きを進められるかどうかで、救出できる分が変わります。逆に、すでに移された分については、このキットで戻せるように書くことはしません。</div>
+      </section>
+
+      <!-- OVERVIEW -->
+      <section class="card">
+        <h2>全体の流れ（まず地図を見てください）</h2>
+        <p class="sub">救出は全部で5つのステップです。前半（0〜2）は「調べるだけ」で安全です。ステップ3で進み方を選び、ステップ4が最終確認です。各ステップの最後に「完了の目印」を書いてあるので、それが見えたら次へ進んでください。</p>
+        <div class="flow">
+          <div><b>ステップ0 準備</b><span>必要なものをそろえる。ここを飛ばすと途中で止まります</span></div>
+          <div><b>ステップ1 確認</b><span>盗まれたウォレットの委任・残高・Nonceを調べる（見るだけ）</span></div>
+          <div><b>ステップ2 NFT一覧</b><span>残っているNFTを全部リストにする（見るだけ）</span></div>
+          <div><b>ステップ3 進み方を選ぶ</b><span>質問に答えて、パターンA（専用キット）かパターンB（MetaMask内で委任を外す）を選ぶ</span></div>
+          <div><b>ステップ4 最終確認</b><span>委任が消えたか確かめ、被害ウォレットを引退させる</span></div>
+          
+          
+          
+        </div>
+        <div class="why">
+          <h4>そもそも、なぜ「まだ残っている分は救出できる」の？（仕組みを30秒で）</h4>
+          <p>攻撃者は、あなたのウォレットに <strong>委任（＝「このウォレットは、あのプログラムの言う通りに動け」という命令の紐付け）</strong> を付けました。これが <span class="term">EIP-7702</span> という仕組みです。</p>
+          <p>大事な点は、<strong>委任は「そのウォレットの鍵を持っている人が署名した、最新のもの」が有効</strong>だということです。つまり、あなたがまだ秘密鍵／シードフレーズを知っている限り、あなた自身の署名で攻撃者の委任を<strong>上書き</strong>できます。このキットは、その上書きを安全な順番で行い、続けてNFTを安全なウォレットへ移すところまでを案内します。なお、上書きのための署名はブラウザでは作れないため、パターンAでは専用キットの中で署名します。</p>
+          <p>逆に言うと、<strong>鍵もシードも完全に失った場合は救出できません</strong>。また、<strong>すでに攻撃者に送り出されてしまった資産は戻せません</strong>。救出できるのは「まだウォレットに残っている資産」だけです。</p>
+        </div>
+      </section>
+
+      <!-- GLOSSARY -->
+      <section class="card">
+        <h2>言葉の説明（先に読まなくてOK。出てきたら戻ってきてください）</h2>
+        <p class="sub">専門用語を、日常の言葉に言い換えたものです。本文中でも同じ言い換えを使っています。</p>
+        <div class="gloss">
+          <div><b>ウォレットアドレス</b><p>「0x」から始まる42文字。銀行でいう口座番号のようなもので、公開しても安全です（ただし残高と結びつくのでSNSに貼らないのが無難）。</p></div>
+          <div><b>秘密鍵／シードフレーズ</b><p>ウォレットの「実印＋暗証番号」そのもの。知っている人は資産を自由に動かせます。誰にも教えません。このページにも入力しません。</p></div>
+          <div><b>委任（EIP-7702）</b><p>「このウォレットは、指定したプログラムの通りに動く」という紐付け。攻撃者が悪用すると、入った資産を自動で盗まれます。</p></div>
+          <div><b>Nonce（ノンス）</b><p>そのウォレットが今までに送った取引の数＝「次の取引の整理番号」。署名の順番を決めるのに必要です。途中で他の取引をするとズレて失敗します。</p></div>
+          <div><b>ガス代</b><p>ブロックチェーンを使う手数料。Polygonでは POL という通貨で払います。救出作業のガス代は、安全なウォレット側が払います。</p></div>
+          <div><b>RescueBatch（レスキュー・バッチ）</b><p>救出専用の小さなプログラム（コントラクト）。被害ウォレットに一時的にこれを委任先にすることで、安全に「移転の許可」を出せるようになります。パターンAの専用キットに含まれていて、キットがチェーン上に置きます。</p></div>
+          <div><b>署名</b><p>「これは確かに本人（鍵の持ち主）が許可しました」という電子的な実印。パターンAでは、専用キットがあなたのパソコンの中で作ります。署名は「許可証」のようなものです。種類によっては、資産を動かす許可そのものになります（今回の「委任」も、署名で付けられました）。だから、内容が分からない署名は絶対にしないでください。パターンAの署名は、あなたのPCの中で、キットが画面に表示した内容についてだけ作られます。</p></div>
+          <div><b>トランザクション（Tx）</b><p>チェーン上に記録される「実際の処理の実行」。送金や許可の実行はTxになって初めて起きます。パターンAでは、キットがまず2回に分けて送ります（Tx1：委任の付け替えと移転の許可、Tx2：委任の解除）。そのあと、安全なウォレットから回収の送信を行います。Tx1の後で止まってしまっても、許可の向きは安全なウォレットだけなので、あわてずにキットを再開すれば続きができます。</p></div>
+          <div><b>approveAll／setApprovalForAll</b><p>「私のNFTを、あの人（安全なウォレット）が代わりに動かしてもいいですよ」という一括許可。これがないと回収できません。</p></div>
+          <div><b>transferFrom</b><p>許可をもらった側が、NFTを実際に引き取る処理。パターンAで、安全なウォレットがこれを実行します。</p></div>
+          <div><b>MetaMask</b><p>ブラウザに入れるウォレット拡張機能。パターンBでは、このアプリの中の操作で委任を外します。</p></div>
+          <div><b>RPC／エクスプローラー</b><p>RPCはチェーンの情報を読み取る窓口、エクスプローラー（PolygonScanなど）は取引履歴を人間が見られるサイトです。</p></div>
+        </div>
+      </section>
+
+      <!-- STEP 0 PREP -->
+      
+      <section class="card" id="intro">
+        <h2>はじめに：このページでやること</h2>
+        <p>やられたウォレットの中に<strong>まだ残っているNFT</strong>を、安全な新しいウォレットへ移すためのページです。すでに持ち出された分は、取り戻せません。</p>
+        <p><strong>やり方は2つあります：</strong></p>
+        <ul>
+          <li><strong>パターンA（専用キットで救出）</strong>：安全な方法。NFTを新しいウォレットへ移せます。パソコンで小さな道具（キット）を使う作業が少しあります。</li>
+          <li><strong>パターンB（MetaMaskで委任だけ外す）</strong>：かんたんな方法。でも、できるのは「委任を外す」だけで、NFTは動かせません。委任が付いていない人には使えません。</li>
+        </ul>
+        <p>秘密鍵（ウォレットの鍵）を誰かに教えた・怪しいサイトに入力した心当たりがある人は、パターンAです。心当たりがない人は、まずパターンB、ダメならパターンAです。ステップ1の確認結果と、途中の質問で、あなた向きの方法を案内します。</p>
+        <p><strong>このページに、秘密鍵の入力欄はありません。</strong>入力した内容が作者のサーバーに送られることもありません（アドレスを確認するために、チェーンの公開窓口と、NFT取得のときだけAlchemyに送られます）。</p>
+      </section>
+      <section class="card" id="step0">
+        <h2><span class="num">0</span>準備 — 始める前にそろえるもの</h2>
+        <p class="sub">ここが一番大事です。途中で「あれがない」と止まると、署名のNonceがズレたり、攻撃者に先を越されたりします。全部そろってからステップ1へ進んでください。これは確認リストです（チェックを保存する仕組みはありません。目で確認してください）。</p>
+        <ul class="prep">
+          <li><span class="n">1</span><div><strong>被害ウォレットの「秘密鍵かシードフレーズ」を、あなた自身がまだ知っていること</strong><p>これが無いと署名ができず、救出できません。確認だけなら知らなくてもできますが、実行（パターンA）には必須です。※このページやチャットに貼る必要は一切ありません。手元にあるかだけ確認してください。</p></div></li>
+          <li><span class="n">2</span><div><strong>新しい「安全なウォレット」を1つ作る</strong><p>MetaMaskで新規作成した、誰にも触られていないウォレットです。これが資産の避難先になります。作り方が一番大事です：MetaMaskの「アカウントを追加」で作る別アカウントは、被害ウォレットと<strong>同じシード</strong>から作られるので、安全ではありません。必ず<strong>新しいシードフレーズが発行される作り方</strong>で、新しいウォレットを作ってください。例：別のブラウザ（普段がChromeならEdge）にもう1つMetaMaskを入れて「新規ウォレットを作成」する、またはスマホのMetaMaskアプリで新規作成する。新しいシードフレーズは紙に書いてオフライン保管し、そのアドレス（0x…）をメモしてください。</p></div></li>
+          <li><span class="n">3</span><div><strong>安全なウォレットに、少額のPOLを入れておく</strong><p>救出作業のガス代（手数料）は安全なウォレットが払います。Polygonなら目安として0.3 POLを用意してください（通常はその半分以下で足ります）。取引所から送るか、別の安全なウォレットから送ってください。<strong>絶対に、被害ウォレットへは送らないでください</strong>（入れた瞬間に攻撃者の委任で盗まれる恐れがあります）。</p></div></li>
+          <li><span class="n">4</span><div><strong>PCに Chrome（またはEdge）と MetaMask を入れる</strong><p>MetaMaskは公式サイト metamask.io からブラウザ拡張機能を入れます。パターンBを使う場合は、被害ウォレットをこのMetaMaskで表示できる状態にしてください。インポートの手順：MetaMaskを開く → アカウントの切り替え →「アカウントを追加」→「秘密鍵をインポート」（表示はバージョンで少し違います）→ 被害ウォレットの秘密鍵を貼る。これはMetaMaskの中だけの操作で、このページに鍵を入力することはありません。パターンAではMetaMaskへのインポートは不要です。</p><p style="margin-top:6px">このページ自体はMetaMaskと接続しません（確認は公開情報の読み取りだけです）。MetaMaskを使うのは、パターンBの操作のときだけです。</p></div></li>
+          <li><span class="n">5</span><div><strong>MetaMaskのネットワークを Polygon に切り替えられるようにしておく</strong><p>パターンBの操作は、ネットワーク（Polygon）ごとに行います。MetaMask上部のネットワーク名で「Polygon Mainnet」に切り替えられます。チェーンIDは 137 です。</p></div></li>
+          <li><span class="n">6</span><div><strong>（ステップ2で使う）Alchemyの無料APIキーを取る ※任意ですが推奨</strong><p>NFTを自動で全部リストにするためのキーです。取り方：下のリンクからAlchemyの公式サイトで無料アカウントを作成 → ログイン後に「Apps」→「Create new app」→ Chainは Polygon、Networkは Polygon Mainnet → 作成後に「API Key」を表示してコピー（32文字ほどの英数字です。<strong>https:// で始まる長いURLはキーではない</strong>ので、コピーするのはキーだけにしてください）。キーはステップ2の欄にだけ貼ります（保存されません）。キーが無くても、PolygonScanで手作業でリストを作って進めることはできます。</p><p style="margin-top:8px"><a href="https://dashboard.alchemy.com/signup" target="_blank" rel="noopener noreferrer"><strong>→ Alchemyに無料登録する（公式サイト）</strong></a><br><a href="https://dashboard.alchemy.com" target="_blank" rel="noopener noreferrer">すでにアカウントがある方はこちら（ダッシュボードを開く）</a><span style="display:block;margin-top:4px">※開くのは公式ドメイン（dashboard.alchemy.com）だけです。似た名前の別サイトで登録しないでください。クレジットカードは不要です。</span></p></div></li>
+          <li><span class="n">7</span><div><strong>時間と心の準備：30〜60分、途中で席を立たない</strong><p>パターンAは、始めたら最後まで一気に進めてください。途中で被害ウォレットで他の取引をすると、手順がずれて失敗します。あわてて知らないサイトの署名に応じるのは厳禁です。</p></div></li>
+          <li><span class="n">8</span><div><strong>プライバシーについて（このページが外部と通信するもの）</strong><p>このページは、表示のために外部の配信サーバー（jsDelivr）からプログラム部品（ethers.js）を、Google Fontsからフォントを読み込みます。その際、あなたのIPアドレスがそれらの運営者に伝わります。それ以外で、このページが入力内容を保存したり、作者のサーバーへ送ったりすることはありません。確認のために入力したアドレスは、チェーンの公開窓口（RPC）と、NFT取得のときだけAlchemyに送られます。</p></div></li>
+        </ul>
+        <div class="red-box"><b>🚫 やってはいけないこと（準備段階で特に）：</b> ①被害ウォレットにガス代を入れる ②「サポート」を名乗る人に秘密鍵やシードを送る ③このページ以外で、内容の分からない署名をする ④見覚えのないNFTのリンクを開く／承認する。この4つを守るだけで、被害の拡大は止まります。</div>
+      </section>
+
+      <!-- STEP 1 CHECK -->
+      <section class="card" id="step1">
+        <h2><span class="num">1</span>ウォレットを確認する（見るだけ・安全）</h2>
+        <p class="sub">調べたいウォレットのアドレス（0x…）を貼り付けてください。あなたのアドレスが最初から入っていることはありません。誰が開いても空の状態です。</p>
+        <div class="why"><h4>なぜやるか／押すと何が起きるか</h4>
+        <p><strong>なぜ：</strong>本当に委任が付いているか、委任先はどこか、今のNonceはいくつかを知らないと、救出の署名が作れません。まず現状を正確に知るためのステップです。</p>
+        <p><strong>「確認する」を押すと：</strong>選んだチェーンの公開窓口（RPC）へアドレスを送り、「委任の状態・残高・Nonce」を読み取って表示します。<strong>読み取りだけ</strong>で、送金も署名も起きません。入力したアドレスはこのページやサーバーに保存されません。</p>
+        <p><strong>失敗したら：</strong>「取得できませんでした」と出たら、ネット接続を確認して、もう一度押してください。チェーンを選び間違えていないかも確認してください（元素騎士は Polygon です）。</p></div>
+
+        <span class="label">チェーンを選ぶ</span>
+        <div class="chain-row" role="group" aria-label="チェーン選択">
+          <button type="button" class="chain" data-chain="polygon" aria-pressed="true"><b>Polygon</b><span>元素騎士は主にこちら ・ POL</span></button>
+          <button type="button" class="chain" data-chain="ethereum" aria-pressed="false"><b>Ethereum</b><span>メインネット ・ ETH</span></button>
+          <button type="button" class="chain" data-chain="base" aria-pressed="false"><b>Base</b><span>ベース ・ ETH</span></button>
+        </div>
+        <p class="hint">※ 確認は3チェーン対応ですが、救出の実行（パターンA）は <strong>Polygon のみ</strong> 対応です（検証済みなのがPolygonのため）。Ethereum／Baseで被害に遭った場合は、確認までを行い、実行は詳しい人に相談してください。</p>
+
+        <label class="label" for="addr">ウォレットアドレス（被害ウォレット）</label>
+        <div class="addr-row">
+          <input id="addr" inputmode="text" autocomplete="off" spellcheck="false" placeholder="0x から始まる 42文字のアドレス">
+          <button class="btn btn-primary" id="runBtn" type="button"><span class="spin" id="spin"></span><span id="runLabel">確認する →</span></button>
+        </div>
+        <p class="hint">アドレスの場所が分からない場合：MetaMaskでそのアカウントを表示し、アカウント名の下に出る「0x…」をクリックするとコピーできます。例のアドレスは入れていません。ご自身（または助けたい人）のアドレスを貼ってください。</p>
+        <div class="error" id="err"></div>
+
+        <div class="empty" id="emptyState">
+          <b>まだ確認していません</b>
+          アドレスを入れて「確認する」を押すと、ここに大きな結果カードが出ます。
+        </div>
+
+        <div class="results" id="results">
+          <div class="verdict" id="verdict">
+            <div class="icon" id="vIcon">✅</div>
+            <div><h3 id="vTitle">—</h3><p id="vText">—</p></div>
+          </div>
+          <div class="grid">
+            <div class="stat"><label>委任の状態（EIP-7702）</label><div class="val" id="sDelegate">—</div><div class="note" id="sDelegateNote">—</div></div>
+            <div class="stat"><label>残高</label><div class="val" id="sBalance">—</div><div class="note">ガス代として使えるネイティブ通貨</div></div>
+            <div class="stat"><label>Nonce（次の取引の整理番号）</label><div class="val" id="sNonce">—</div><div class="note">救出のときに使います。この後、被害ウォレットで取引しないでください</div></div>
+            <div class="stat"><label>アカウントの種類</label><div class="val" id="sType">—</div><div class="note" id="sTypeNote">—</div></div>
+          </div>
+          <div class="stat" style="margin-top:12px"><label>委任先アドレス（委任がある場合）</label><div class="val mono" id="sDelegateAddr">なし</div><div class="note" id="sOfficialNote"></div></div>
+          <div class="links" id="explorerLinks"></div>
+          <div class="teal-box" style="margin-bottom:0"><b>✅ ステップ1の完了の目印：</b>上の結果カードが出て、Nonceの数字が分かれば完了です。「委任は付いていません（緑）」なら、委任の問題はありません（心配がなければ、ここで終わって大丈夫です）。ただし、秘密鍵やシードフレーズを怪しいサイトに入力した／誰かに教えた心当たりがある場合は、委任が無くても安全ではありません。ステップ3の質問から進んでください。判定が「不明な委任先への委任があります（赤）」なら、そのままステップ2へ進んでください。判定が「公式の委任（黄）」で心当たりがある場合は、無理に救出を実行する必要はありません。心当たりがない場合は、赤と同じように進めてください。</div>
+        </div>
+      </section>
+
+      <!-- STEP 2 NFT -->
+      <section class="card" id="step2">
+        <h2><span class="num">2</span>NFTを全部リストにする（見るだけ・安全）</h2>
+        <p class="sub">回収するには「どのNFTが、まだ被害ウォレットに残っているか」の完全なリストが必要です。ここで作るリストは記録用です（CSVで保存できます）。パターンAの専用キットでも、同じように一覧を作ってから回収します。</p>
+        <div class="why"><h4>なぜやるか／押すと何が起きるか</h4>
+        <p><strong>なぜ：</strong>回収は「リストにあるNFT」しか移せません。漏れがあると、そのNFTだけ取り残されます。逆に、すでに盗まれたNFTはリストに出てきません（それは戻せない分です）。</p>
+        <p><strong>「NFTを取得する」を押すと：</strong>Alchemyという索引サービスに「このアドレスが持つNFT」を問い合わせ、一覧を表示します。読み取りだけです。APIキーはこのページに保存されず、Alchemyへの問い合わせにだけ使います。</p>
+        <p><strong>APIキーが無い場合：</strong>下の「手作業でリストを作る方法」を開いて、PolygonScanから1件ずつ追加することもできます。件数が少ない人（数件程度）は手作業でも大丈夫です。</p></div>
+
+        <label class="label" for="alchemyKey">Alchemy APIキー（ステップ0の手順6で取得）</label>
+        <input class="txtin" id="alchemyKey" type="password" autocomplete="off" spellcheck="false" placeholder="AlchemyのAPIキーを貼り付け（保存されません）">
+        <p class="hint"><strong>ここに秘密鍵やシードフレーズは絶対に入れないでください。</strong>入れるのはAlchemyのキーだけです。まだキーがない場合は、<a href="https://dashboard.alchemy.com/signup" target="_blank" rel="noopener noreferrer">Alchemy公式サイトで無料取得</a>できます（登録後に「Apps」→「Create new app」、Chainは Polygon、Networkは Polygon Mainnet）。登録画面は英語の場合があります（ブラウザの設定によっては日本語で表示されます）。キーは、ログイン後の「Apps」で作ったアプリを開き、「API Key」の表示で出てくる、32文字ほどの英数字です。<strong>https:// で始まる長いURLはキーではありません</strong>ので、貼らないでください。すでにアカウントがある方は<a href="https://dashboard.alchemy.com" target="_blank" rel="noopener noreferrer">ダッシュボード</a>からキーを確認できます。詳しい手順はステップ0の手順6にあります。</p>
+        <p class="hint">これはウォレットの秘密鍵ではありません。Alchemyという情報サービスの鍵です。それでも他人には見せないでください。入力はこのページを開いている間だけメモリに置かれ、閉じれば消えます。</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+          <button class="btn btn-primary" id="nftBtn" type="button"><span class="spin" id="nftSpin"></span><span id="nftLabel">NFTを取得する →</span></button>
+          <button class="btn btn-ghost" id="csvBtn" type="button" disabled>NFTリストをCSVで保存</button>
+        </div>
+        <div class="error" id="nftErr"></div>
+        <div class="okbox" id="nftOk"></div>
+        <div class="status-line" id="nftSummary"><span class="dot"></span><span>まだ取得していません。ステップ1で確認したアドレスが対象になります（アドレス欄の内容を使います）。</span></div>
+        <div class="nft-list" id="nftList"></div>
+
+        <details class="faqd">
+          <summary>APIキーが無い／使いたくない場合：手作業でリストを作る方法</summary>
+          <p>① ステップ1の確認結果に出る「エクスプローラーで開く」からPolygonScanを開きます。②「Token Transfers」や保有トークン一覧で、被害ウォレットが持つNFTの「コントラクトアドレス」と「Token ID」を確認します。③ 下の欄に、1行につき「コントラクトアドレス,TokenID,ERC721」の形で貼り付けて「リストに反映する」を押してください（ERC-1155の場合は末尾を ERC1155 に）。コントラクトアドレス・TokenID・種類（ERC721／ERC1155）は、OpenSeaでそのNFTのページを開き、「詳細（Details）」を見ると分かります。NFTが多い場合や分からない場合は、Alchemyキーでの自動取得がおすすめです。この内容は、このページでの記録用です。パターンAのキットでは、キットの中でもう一度一覧を作ります（Alchemyキーがあれば自動です）。</p>
+          <label class="label" for="manualNfts">手作業リスト（1行に1件）</label>
+          <textarea class="txtin mono" id="manualNfts" rows="4" spellcheck="false" placeholder="0xコントラクトアドレス,123,ERC721"></textarea>
+          <div style="margin-top:10px"><button class="btn btn-ghost btn-sm" id="manualBtn" type="button">リストに反映する</button></div>
+        </details>
+
+        <details class="faqd">
+          <summary>目で確認したい場合：エクスプローラー／OpenSeaへのリンク</summary>
+          <p>ステップ1の確認が終わると、そのアドレス専用のリンクがここに出ます。画像つきで見たい場合はOpenSea、移動履歴を正確に見たい場合はPolygonScanが向いています。</p>
+          <div id="nftLinks"><p style="color:var(--muted);font-size:14.5px;margin:8px 0 0">まずステップ1の「確認する」を実行してください。</p></div>
+          <ul style="color:var(--muted);font-size:14.5px;padding-left:20px;margin:10px 0 0">
+            <li>見覚えのないNFTがあっても、<strong style="color:var(--text)">触らず・リンクを開かず・承認（Approve）しない</strong>でください。詐欺NFTの可能性があります</li>
+            <li>「すでに攻撃者へ移されてしまったNFT」はここには出ません。出てきたものが「まだ救出できる分」です</li>
+          </ul>
+        </details>
+        <div class="teal-box"><b>✅ ステップ2の完了の目印：</b>「◯件のNFTがリストに入りました」と表示され、一覧が見えていること。0件の場合は、本当にNFTが残っていない（盗み尽くされた／元々無い）可能性があります。委任だけ外したい場合は、ステップ3のパターンBを見てください。迷ったら、無理に進めず詳しい人に相談してください。</div>
+      </section>
+
+      <!-- STEP 3 CHOOSE -->
+      <section class="card" id="step3">
+        <h2><span class="num">3</span>進み方を選ぶ — パターンA／パターンB</h2>
+        <p class="sub">救出の実行方法は2つあります。まず質問に答えて、自分の状況に合う方を選んでください。迷ったらパターンAです。</p>
+
+        <div class="note-box" id="choiceQ">
+          <b>まず確認：秘密鍵やシードフレーズを、怪しいサイトに入力した／誰かに教えた／送った覚えはありますか？</b>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+            <button class="btn btn-ghost btn-sm" id="qYes" type="button">ある・わからない</button>
+            <button class="btn btn-ghost btn-sm" id="qNo" type="button">ない</button>
+          </div>
+          <div class="status-line" id="choiceRecommend" style="margin-top:10px"><span class="dot"></span><span>ボタンを押すと、おすすめのパターンを表示します。</span></div>
+          <p style="margin:10px 0 0">「ある・わからない」の場合は、鍵が漏れている前提で動きます。この場合パターンBは選ばないでください（委任を外しても、漏れた鍵でまた操作されてしまいます）。</p>
+        </div>
+
+        <div id="patternA" style="margin-top:18px">
+          <h3>パターンA：専用キット（ZIP）で救出する — 安全・確実</h3>
+          <p><strong>向いている人：</strong>鍵漏れの心当たりがある／わからない人。知らない委任先が付いている人。残っているNFTを新しいウォレットへ移したい人。</p>
+          <p><strong>仕組み：</strong>安全な新しいウォレットが手数料を全部払い、やられたウォレットにはお金を送りません。だから犯人の自動プログラムと取り合いになりません。署名は、あなたのパソコンの中（専用キット）でだけ作ります。</p>
+          <p><strong>なぜ専用キットが必要か：</strong>委任の付け替えに必要な署名は、ブラウザのMetaMaskでは作れない仕様になっています（MetaMaskがその機能を提供していないため）。だから署名だけは、パソコンで動く専用キットの中で行います。</p>
+          <ol class="do-list">
+            <li><strong>下のボタンから専用キット（ZIP）をダウンロードする</strong></li>
+            <li><strong>ZIPを解凍して、中の「まず読んでください」を読む</strong><span class="mm">ファイル名は READ_FIRST.txt です。準備するもの（新しいウォレット・POL 0.3ほど・今のウォレットの秘密鍵）が書いてあります。</span></li>
+            <li><strong>START.bat をダブルクリックして、画面の質問に1つずつ答える</strong><span class="mm">秘密鍵は、あなたのパソコンの入力欄（打っても見えない欄）でだけ使います。誰にも送りません。</span></li>
+          </ol>
+          <div style="margin:12px 0">
+            <a class="btn btn-primary" id="dlKitBtn" href="guided-rescue-kit.zip" download>専用キット（ZIP）をダウンロード</a>
+          </div>
+          <p class="hint">※ Windowsパソコン用です。Pythonが無いパソコンでも、START.bat が案内します。青い画面「Windows によって PC が保護されました」が出たら「詳細情報」→「実行」。やり方はZIPの中の「まず読んでください」に全部書いてあります。</p>
+          <p class="hint">この方法は、2026-11-19に実際のPolygonチェーンで「委任の付け替え→解除→NFT回収」まで全工程の成功を確認済みです。</p>
+        </div>
+
+        <div id="patternB" style="margin-top:22px">
+          <h3>パターンB：MetaMaskの中で委任だけを外す — かんたん・委任の解除のみ</h3>
+          <p><strong>向いている人：</strong>鍵漏れの心当たりが「ない」人で、付いている委任だけを外したい人。</p>
+          <p><strong>進み方（MetaMaskの中の操作）：</strong></p>
+          <ol class="do-list">
+            <li><strong>MetaMaskで、やられたウォレットのアカウントを表示する</strong><span class="mm">そのアカウントがMetaMaskに入っていない場合は、先にインポートしてください（手順はステップ0の準備4）。</span></li>
+            <li><strong>アカウントの詳細（︙＝点が3つのメニュー）から「スマートアカウント」を開く</strong><span class="mm">「スマートアカウント」は、委任がオンになっている状態のことです（MetaMaskの呼び名）。</span></li>
+            <li><strong>ネットワーク「Polygon」のスイッチ（右側の丸いボタン）をオフにする</strong><span class="mm">「スタンダードアカウント (EOA) に戻す」と出たら、そのまま進めてください。</span></li>
+            <li><strong>確認画面で内容を見て、実行する</strong><span class="mm">MetaMaskの画面が出たら、内容を確認して進めてください。画面が出ないときは、ツールバーのMetaMaskアイコンを開いてください。手数料は、やられたウォレット自身の残高から払われます（少額のPOLが必要です）。</span></li>
+          </ol>
+          <div class="red-box"><b>パターンBの注意：</b>①外せるのは「委任」だけです。NFTやお金は動きません。②手数料はやられたウォレット持ちです。鍵が漏れている場合、残高を足すと犯人と取り合いになる危険があります。③MetaMask公式の手順として案内されているのは公式の委任先の場合です。<strong>知らない委任先でもこの操作で外せるかは、現在検証中です</strong>。外れなかった場合や、NFTも救出したい場合は、パターンAを使ってください。④手数料ぶんのPOLが被害ウォレットに無い場合は、パターンBは使えません。被害ウォレットにお金を送るのは危険なので、その場合もパターンAを使ってください。</div>
+        </div>
+        <div class="teal-box"><b>✅ ステップ3の完了の目印：</b>パターンAなら専用キットのダウンロードが終わっていること。パターンBならMetaMaskでスイッチをオフにする操作が終わっていること。どちらも、終わったらステップ4で確かめます。</div>
+      </section>
+
+      <!-- STEP 4 FINAL -->
+      <section class="card" id="step4">
+        <h2><span class="num">4</span>最終確認と、被害ウォレットの引退</h2>
+        <p class="sub">最後に「本当に終わったか」を確かめます。ここを飛ばすと、委任が残ったまま気づかないことがあります。</p>
+        <ol class="do-list">
+          <li><strong>ステップ1に戻り、被害ウォレットでもう一度「確認する →」を押す</strong><span class="mm">パターンBの場合：判定が「委任は付いていません」になっていれば、委任の解除は完了です。パターンAの場合：専用キットが委任を解除まで行うので、同じく「委任は付いていません」になるはずです。まだ委任が残っていたら、選んだパターンの作業が最後まで終わっているか確認してください。</span></li>
+          <li><strong>安全なウォレットで、回収したNFTが見えるか確認する</strong><span class="mm">パターンAで救出した場合のみ。OpenSeaやPolygonScanで安全なウォレットのアドレスを開き、ステップ2のリストと数が合うか見てください。</span></li>
+          <li><strong>被害ウォレットは、二度と使わない</strong><span class="mm">鍵やシードが漏れた可能性がある場合、委任を解除しても漏れた鍵は漏れたままです。資産が全部移ったことを確認したら、そのウォレットには二度と入金しないでください。今後は安全なウォレットだけを使います。</span></li>
+          <li><strong>漏れた原因を思い出して、同じことを繰り返さない</strong><span class="mm">「スマートアカウント有効化／アップグレード」などと称する署名、知らないサイトでの承認（Approve）や委任の署名は、今後は内容が分かるまで絶対に進まないでください。見覚えのないNFTやトークンは、触らず・開かず・承認しないのが鉄則です。</span></li>
+        </ol>
+        <div class="note-box"><b>検証について（正直にお伝えします）：</b>パターンAの方式（委任の付け替え→移転の許可→委任の解除→回収を、取引を分けて行う方法）は、2026-11-19に実際のPolygonチェーン上で「乗っ取られた状態→救出完了」までを通しで実行し、残っていたNFTを回収できることを確認済みです。逆に、手順を1つの取引にまとめる方式は失敗することも確認済みです。パターンBはMetaMask公式の手順ですが、知らない委任先を外せるかどうかは検証中です。実際の結果は、ガス代の変動やNFTの状態によって変わる場合があります。うまくいかないときは、エラーの画面をスクリーンショットに残して、詳しい人に相談してください。</div>
+      </section>
+
+      <!-- DESKTOP -->
+      <section class="card">
+        <h2>🖥️ すぐ開けるようにする（ブックマーク）</h2>
+        <p class="sub">このページは、アドレス（URL）でいつでも開けます。次からすぐ開けるよう、ブックマークしておくのがおすすめです。</p>
+        <div class="desktop-guide">
+          <div class="method"><h3>パソコン（Chrome）</h3><ol><li>このページを開いた状態で、キーボードの Ctrl と D を同時に押す</li><li>「完了」を押すとブックマークに登録されます</li><li>次からは、ブックマークから開けます</li></ol></div>
+          <div class="method"><h3>スマホで見ている人へ</h3><ol><li>確認（ステップ1・2）だけなら、スマホでもできます</li><li>実行はパソコンで行ってください（パターンAはZIPのダウンロードと解凍、パターンBはMetaMaskの操作が必要です）</li><li>このページのアドレスを、パソコンに送って開いてください</li></ol></div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section class="card faq">
+        <h2>よくある疑問（困ったらまずここ）</h2>
+        <details open><summary>結局、必要なものはこのファイルだけですか？</summary><p>確認（ステップ1）とNFTリスト（ステップ2）と、進み方の選択（ステップ3）はこのページで行います。実行は、パターンAなら専用キット（ZIP、ステップ3からダウンロード）、パターンBならMetaMaskの中の操作です。他に必要なのは、安全なウォレット、少額のPOL、（推奨）Alchemyの無料キーだけです。</p></details>
+        <details><summary>他の人も使えますか？</summary><p>使えます。このページのアドレス（URL）を教えるだけです。条件は「本人がまだ秘密鍵／シードフレーズを知っていること」「署名は本人が自分のPCの中でやること」「救出先ウォレットと少額のガス代があること」です。特定の人のアドレスは最初から入っていないので、誰が開いても空の状態で始まります。ただし救出できるのは、その人のウォレットにまだ残っている分だけです。</p></details>
+        <details><summary>盗まれた後でも、救出できますか？</summary><p>本人が鍵をまだ知っている限り、「まだウォレットに残っている資産」は救出できます（パターンAの方式は、実際のPolygonチェーンで検証済み）。ただし、すでに攻撃者に送り出された資産自体は戻せません。転売されて第三者に渡ったNFTも戻せません。鍵もシードも失った場合は救出できません。</p></details>
+        <details><summary>秘密鍵を入れる画面はありますか？</summary><p>このページにはありません。パターンAの専用キットでは、あなたのパソコンの中の入力欄（打っても文字が見えない欄）でだけ秘密鍵を使います。それ以外の場所（Webサイト・チャット・メール）で秘密鍵を入力させる画面が出たら、それはこのキットではありません。すぐに閉じてください。</p></details>
+        <details><summary>公式Delegatorへの委任は危険ですか？</summary><p>MetaMaskの公式EIP-7702 Delegator（<span style="font-family:monospace;font-size:12.5px">0x63c0c19a282a1b52b07dd5a65b58948a07dae32b</span>）への委任は、MetaMaskのスマートアカウント機能によるものです。ステップ1の確認では、このアドレスかどうかを判定して表示します。公式委任で心当たりがある場合は、無理に救出を実行する必要はありません。</p></details>
+        <details><summary>MetaMaskの画面が英語で分かりません</summary><p>パターンBの操作で出る画面は、まず「どのアカウントで」「何をするか」だけ見てください。「Smart account」はスマートアカウントのこと、「Standard account (EOA)」は委任を外した通常のアカウントのことです。英語の画面で進めるのが不安な場合は、無理をせずパターンA（日本語の案内つきキット）を使ってください。</p></details>
+        <details><summary>なぜブラウザ（MetaMask）で署名できないのですか？</summary><p>委任の付け替えに必要な署名は、現在のMetaMaskではウェブサイトから作れない仕様になっています（古い署名方式は廃止され、代わりの方式もMetaMaskは提供していません）。そのためパターンAでは、パソコンで動く専用キットの中で署名します。これは仕様上の制限で、このページの不具合ではありません。</p></details>
+        <details><summary>途中でページを閉じてしまいました</summary><p>ステップ2まで（確認だけ）なら、最初からやり直せば大丈夫です。パターンAの途中で止めた場合は、専用キットの案内に従ってください（途中で止めても状況は悪くなりません）。パターンBはMetaMaskの中の操作なので、このページを閉じても影響ありません。どの場合も、再開するときはまずステップ1で現状を確認してください。</p></details>
+        <details><summary>このページは安全ですか？</summary><p>このページ自体は、確認（読み取り）と案内だけを行います。秘密鍵の入力欄はなく、入力した内容が作者のサーバーに送られることもありません。実行は、あなたのパソコンの中（パターンA）か、MetaMaskの中（パターンB）で完結します。詳しくはステップ0の「プライバシーについて」を見てください。</p></details>
+      </section>
+    </main>
+
+    <aside class="side">
+      <div class="safe">
+        <h2>🔒 安全ルール（絶対）</h2>
+        <ul>
+          <li><strong>秘密鍵・シードフレーズは誰にも教えない。</strong>AIにも、サポートを名乗る人にも。このページにも入力欄はありません。</li>
+          <li>署名は<strong>パターンAの専用キットの中か、MetaMaskの画面だけ</strong>。内容が分からない署名は「拒否」が正解です。</li>
+          <li>被害ウォレットに<strong>ガス代を入れない</strong>（パターンAの決まりです。ガス代は安全なウォレットで用意します）。例外はパターンBのときだけで、その場合も入れるのは最小限にしてください。</li>
+          <li>見覚えのないNFTやトークンの<strong>リンクを開かない・承認しない</strong>。</li>
+          <li>専用キットは<strong>このページのステップ3からダウンロードしたものだけ</strong>を使う。出所の分からないZIPは開かない。</li>
+          <li>アドレスは公開情報ですが、<strong>残高と結びつくのでSNSに貼らない</strong>のが無難です。</li>
+        </ul>
+      </div>
+      <div class="card" style="margin-top:20px">
+        <h2 style="font-size:18px">進み方ナビ</h2>
+        <ul class="prog">
+          <li><a href="#intro">はじめに</a><span>説明を先に読む</span></li>
+          <li><a href="#step0">ステップ0 準備</a><span>そろえるものを確認</span></li>
+          <li><a href="#step1">ステップ1 確認</a><span>委任・Nonceを見るだけ</span></li>
+          <li><a href="#step2">ステップ2 NFT一覧</a><span>残っているNFTをリスト化</span></li>
+          <li><a href="#step3">ステップ3 進み方を選ぶ</a><span>パターンA／パターンB</span></li>
+          <li><a href="#step4">ステップ4 最終確認</a><span>委任が消えたか確認・引退</span></li>
+          
+          
+          
+        </ul>
+      </div>
+      <div class="card" style="margin-top:20px">
+        <h2 style="font-size:18px">困ったときの順番</h2>
+        <ol style="margin:0;padding-left:20px;color:var(--muted);font-size:14.5px">
+          <li>まずステップ1で<strong style="color:var(--text)">現状を確認</strong>する</li>
+          <li>判定が「公式委任」で、付けた心当たりがある場合は、基本は様子見で大丈夫。心当たりがない場合は「不明な委任先」と同じ扱いで進める</li>
+          <li>「不明な委任先」があれば、ステップ0から順に進める</li>
+          <li>エラーが出たら、画面のスクリーンショットを撮って詳しい人に相談する（むやみに繰り返さない）</li>
+        </ol>
+      </div>
+    </aside>
+  </div>
+  <p class="foot">ウォレット救出キット（デスクトップ用・オールインワン）— このページで確認と進み方の選択を行い、実行はパターンA（専用キット）またはパターンB（MetaMask内）で行います。表示は確認時点のブロックチェーン公開情報に基づきます。</p>
+</div>
+
+<script>
+var CHAINS = {
+  polygon: { name:'Polygon', symbol:'POL', chainId:137, rpcs:['https://polygon-bor-rpc.publicnode.com','https://polygon.drpc.org'], explorer:'https://polygonscan.com' },
+  ethereum:{ name:'Ethereum', symbol:'ETH', chainId:1, rpcs:['https://ethereum-rpc.publicnode.com','https://eth.drpc.org'], explorer:'https://etherscan.io' },
+  base:    { name:'Base', symbol:'ETH', chainId:8453, rpcs:['https://base-rpc.publicnode.com','https://mainnet.base.org'], explorer:'https://basescan.org' }
+};
+var OFFICIAL = '0x63c0c19a282a1b52b07dd5a65b58948a07dae32b';
+var ZERO = '0x0000000000000000000000000000000000000000';
+var RESCUE_BYTECODE = '0x6080604052348015600e575f5ffd5b506102f68061001c5f395ff3fe608060405234801561000f575f5ffd5b5060043610610029575f3560e01c80634edba0d61461002d575b5f5ffd5b610047600480360381019061004291906101bb565b610049565b005b5f5f90505b828290508110156100f25782828281811061006c5761006b610218565b5b90506020020160208101906100819190610245565b73ffffffffffffffffffffffffffffffffffffffff1663a22cb4658560016040518363ffffffff1660e01b81526004016100bc929190610299565b5f604051808303815f87803b1580156100d3575f5ffd5b505af19250505080156100e4575060015b50808060010191505061004e565b50505050565b5f5ffd5b5f5ffd5b5f73ffffffffffffffffffffffffffffffffffffffff82169050919050565b5f61012982610100565b9050919050565b6101398161011f565b8114610143575f5ffd5b50565b5f8135905061015481610130565b92915050565b5f5ffd5b5f5ffd5b5f5ffd5b5f5f83601f84011261017b5761017a61015a565b5b8235905067ffffffffffffffff8111156101985761019761015e565b5b6020830191508360208202830111156101b4576101b3610162565b5b9250929050565b5f5f5f604084860312156101d2576101d16100f8565b5b5f6101df86828701610146565b935050602084013567ffffffffffffffff811115610200576101ff6100fc565b5b61020c86828701610166565b92509250509250925092565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52603260045260245ffd5b5f6020828403121561025a576102596100f8565b5b5f61026784828501610146565b91505092915050565b6102798161011f565b82525050565b5f8115159050919050565b6102938161027f565b82525050565b5f6040820190506102ac5f830185610270565b6102b9602083018461028a565b939250505056fea2646970667358221220b4336b7cec6153fa99d9c2f31055734d60b6bb0175a52595b2c0d09719359fdc64736f6c634300081c0033';
+var W = { victim:null, victimNonce:null, nfts:[], safe:null, batch:null, auth1:null, auth2:null, tx1done:false };
+var current = 'polygon';
+
+function $(id){ return document.getElementById(id); }
+function logTo(id, msg){ var el=$(id); el.style.display='block'; el.textContent += (el.textContent?'\n':'') + msg; el.scrollTop = el.scrollHeight; }
+function setStatus(id, html, cls){ var el=$(id); el.className='status-line'+(cls?' '+cls:''); el.innerHTML='<span class="dot"></span><span>'+html+'</span>'; }
+function showErr(id, msg){ var e=$(id); e.className='error'; e.textContent=msg; e.style.display='block'; }
+function hideErr(id){ $(id).style.display='none'; }
+function download(name, text, type){
+  var blob = new Blob([text], {type: type||'text/plain'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+}
+function nftContracts(){
+  var seen={}, out=[];
+  W.nfts.forEach(function(n){ var c=n.contract.toLowerCase(); if(!seen[c]){ seen[c]=1; out.push(n.contract); } });
+  return out;
+}
+function refreshSignSummary(){ updateButtons(); }
+function updateButtons(){
+  var c=$('csvBtn'); if(c) c.disabled = W.nfts.length===0;
+}
+function renderNfts(){
+  var list=$('nftList'); list.innerHTML='';
+  W.nfts.forEach(function(n){
+    var d=document.createElement('div'); d.className='nft-item';
+    d.innerHTML='<b></b><span class="tag"></span><span class="c"></span>';
+    d.querySelector('b').textContent = (n.name ? n.name+' ' : '') + '#'+n.tokenId;
+    d.querySelector('.tag').textContent = n.type || 'ERC721';
+    d.querySelector('.c').textContent = 'コントラクト: '+n.contract;
+    list.appendChild(d);
+  });
+  if(W.nfts.length>0){
+    setStatus('nftSummary','<strong>'+W.nfts.length+' 件</strong>のNFTがリストに入っています。対象コントラクトは '+nftContracts().length+' 種類です。このリストは記録用です。','on');
+    var ok=$('nftOk'); ok.style.display='block'; ok.innerHTML='<b>'+W.nfts.length+' 件のNFTがリストに入りました。</b> ステップ2は完了です。ステップ3へ進んでください。';
+  }
+  updateButtons();
+}
+
+/* ---------- Step 1: read-only check ---------- */
+document.querySelectorAll('.chain').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('.chain').forEach(function(x){x.setAttribute('aria-pressed','false')});
+    b.setAttribute('aria-pressed','true'); current = b.getAttribute('data-chain');
+  });
+});
+function rpcCall(rpcs, method, params){
+  var chain = Promise.reject(new Error('start'));
+  rpcs.forEach(function(url){
+    chain = chain.catch(function(){
+      return fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:method,params:params})})
+        .then(function(r){ if(!r.ok) throw new Error('rpc'); return r.json(); })
+        .then(function(j){ if(j.error) throw new Error(j.error.message||'rpc error'); return j.result; });
+    });
+  });
+  return chain;
+}
+function hexToDecimal(hex, decimals){
+  try{
+    var v = BigInt(hex); var d = BigInt(10) ** BigInt(decimals);
+    var whole = v / d; var frac = (v % d).toString().padStart(decimals,'0').replace(/0+$/,'');
+    return frac ? whole.toString()+'.'+frac.slice(0,6) : whole.toString();
+  }catch(e){ return '—'; }
+}
+$('runBtn').addEventListener('click', function(){
+  hideErr('err');
+  var addr = $('addr').value.trim();
+  if(!/^0x[0-9a-fA-F]{40}$/.test(addr)){
+    showErr('err','アドレスの形式がちがいます。「0x」から始まる42文字のアドレスを貼り付けてください。');
+    return;
+  }
+  var cfg = CHAINS[current];
+  var btn=$('runBtn'); btn.disabled=true; $('spin').style.display='block'; $('runLabel').textContent='確認中…';
+  Promise.all([
+    rpcCall(cfg.rpcs,'eth_getCode',[addr,'latest']),
+    rpcCall(cfg.rpcs,'eth_getBalance',[addr,'latest']),
+    rpcCall(cfg.rpcs,'eth_getTransactionCount',[addr,'latest'])
+  ]).then(function(res){
+    var code=res[0]||'0x', bal=res[1], nonce=res[2];
+    $('emptyState').style.display='none'; $('results').style.display='block';
+    var delegate=null;
+    if(code && code.toLowerCase().indexOf('0xef0100')===0 && code.length>=48){ delegate='0x'+code.slice(8,48).toLowerCase(); }
+    var isDelegated = !!delegate;
+    var isOfficial = delegate && delegate.toLowerCase()===OFFICIAL;
+    var verdict=$('verdict');
+    verdict.className='verdict '+( !isDelegated ? 'ok' : (isOfficial ? 'warn' : 'danger') );
+    $('vIcon').textContent = !isDelegated ? '✅' : (isOfficial ? '🟡' : '🔴');
+    $('vTitle').textContent = !isDelegated ? '委任は付いていません' : (isOfficial ? '公式の委任が付いています' : '不明な委任先への委任があります');
+    $('vText').textContent = !isDelegated ? 'EIP-7702の委任は検出されませんでした。通常のウォレットの状態です。' : (isOfficial ? '委任先はMetaMask公式Delegatorです。MetaMaskのスマートアカウント機能によるものと考えられます。心当たりがない場合も、あわてて送金せず手順を確認してください。' : '委任先が公式アドレスではありません。盗まれた後の可能性があります。資産を新たに入れず、ステップ2以降の手順で委任の付け替え・解除を進めてください。本人が鍵を知っていれば、まだ残っている分は救出できます（すでに移された分は戻せません）。署名を求める怪しいサイトには絶対に応じないでください。');
+    $('sDelegate').textContent = !isDelegated ? 'なし' : (isOfficial ? 'あり（公式）' : 'あり（不明）');
+    $('sDelegateNote').textContent = !isDelegated ? 'EIP-7702委任なし' : (isOfficial ? 'MetaMask公式Delegatorへの委任' : '公式ではないアドレスへの委任');
+    $('sBalance').textContent = hexToDecimal(bal,18)+' '+cfg.symbol;
+    $('sNonce').textContent = parseInt(nonce,16).toString();
+    $('sType').textContent = isDelegated ? 'スマートアカウント' : (code==='0x' ? '通常ウォレット (EOA)' : 'コントラクト');
+    $('sTypeNote').textContent = isDelegated ? 'EIP-7702で委任中' : (code==='0x' ? 'コードなし・通常のアカウント' : 'コントラクトコードあり');
+    $('sDelegateAddr').textContent = delegate ? delegate : 'なし';
+    $('sOfficialNote').textContent = delegate ? (isOfficial ? '✅ 公式Delegator（0x63c0…dae32b）と一致しました' : '⚠️ 公式Delegatorとは一致しませんでした') : '';
+    $('explorerLinks').innerHTML = '<a class="btn btn-ghost" target="_blank" rel="noopener" href="'+cfg.explorer+'/address/'+addr+'">'+cfg.name+' エクスプローラーで開く ↗</a>'
+      + '<a class="btn btn-ghost" target="_blank" rel="noopener" href="'+cfg.explorer+'/tokenholdings?a='+addr+'">トークン保有を見る ↗</a>';
+    $('nftLinks').innerHTML = '<div class="links" style="margin:8px 0 0">'
+      + '<a class="btn btn-primary" style="min-width:auto" target="_blank" rel="noopener" href="'+cfg.explorer+'/address/'+addr+'#tokentxns">NFT・トークン履歴（'+cfg.name+'）↗</a>'
+      + '<a class="btn btn-ghost" target="_blank" rel="noopener" href="https://opensea.io/'+addr+'">OpenSeaでNFTを見る ↗</a></div>'
+      + '<p class="hint">対象アドレス：<span style="font-family:monospace">'+addr+'</span>（'+cfg.name+'）</p>';
+    if(current==='polygon'){ W.victim = addr; W.victimNonce = parseInt(nonce,16); refreshSignSummary(); }
+    $('results').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }).catch(function(){
+    showErr('err','チェーンから情報を取得できませんでした。少し待ってから、もう一度「確認する」を押してください。ネットワーク接続もご確認ください。');
+  }).finally(function(){
+    btn.disabled=false; $('spin').style.display='none'; $('runLabel').textContent='確認する →';
+  });
+});
+$('addr').addEventListener('keydown', function(e){ if(e.key==='Enter'){ $('runBtn').click(); } });
+
+/* ---------- Step 2: NFT list via Alchemy / manual ---------- */
+$('nftBtn').addEventListener('click', function(){
+  hideErr('nftErr');
+  var addr = $('addr').value.trim();
+  var key = $('alchemyKey').value.trim();
+  if(!/^0x[0-9a-fA-F]{40}$/.test(addr)){ showErr('nftErr','先にステップ1で被害ウォレットのアドレスを入力してください。'); return; }
+  if(current!=='polygon'){ showErr('nftErr','NFT取得はPolygonのみ対応です。チェーンをPolygonにしてください。'); return; }
+  if(!key){ var ne=$('nftErr'); ne.className='status warn'; ne.textContent='キーが無い人は、このボタンは押さなくて大丈夫です。下の「手作業でリストを作る方法」から進んでください。'; ne.style.display='block'; return; }
+  if(/^https?:\/\//i.test(key)){ showErr('nftErr','URLが貼られています。貼るのは「キー」だけです。URLの最後の「/」の後ろにある文字列だけをコピーして貼ってください。'); return; }
+  var btn=$('nftBtn'); btn.disabled=true; $('nftSpin').style.display='block'; $('nftLabel').textContent='取得中…';
+  var rows=[], pageKey=null, base='https://polygon-mainnet.g.alchemy.com/nft/v3/'+encodeURIComponent(key)+'/getNFTsForOwner';
+  function fetchPage(){
+    var url=base+'?owner='+addr+'&withMetadata=true&pageSize=100'+(pageKey?'&pageKey='+encodeURIComponent(pageKey):'');
+    return fetch(url).then(function(r){ if(!r.ok) throw new Error('alchemy'); return r.json(); }).then(function(data){
+      (data.ownedNfts||[]).forEach(function(n){
+        rows.push({ contract:n.contract.address, tokenId:String(n.tokenId), type:(n.tokenType||'ERC721').toUpperCase(), name:(n.name|| (n.contract&&n.contract.name) ||'') });
+      });
+      pageKey=data.pageKey;
+      if(pageKey) return fetchPage();
+    });
+  }
+  fetchPage().then(function(){
+    W.nfts = rows; W.victim = addr; renderNfts();
+    if(rows.length===0){ setStatus('nftSummary','取得結果は <strong>0件</strong> でした。NFTが残っていない可能性があります。ステップ3以降は無理に進めず、相談してください。','warn'); }
+  }).catch(function(){
+    showErr('nftErr','NFTを取得できませんでした。APIキーが正しいか、アプリのチェーンがPolygon Mainnetになっているか確認してください。');
+  }).finally(function(){ btn.disabled=false; $('nftSpin').style.display='none'; $('nftLabel').textContent='NFTを取得する →'; });
+});
+$('manualBtn').addEventListener('click', function(){
+  hideErr('nftErr');
+  var lines=$('manualNfts').value.split('\n'), rows=[], bad=0;
+  lines.forEach(function(line){
+    line=line.trim(); if(!line) return;
+    var p=line.split(',').map(function(x){return x.trim();});
+    if(p.length>=2 && /^0x[0-9a-fA-F]{40}$/.test(p[0])){ rows.push({contract:p[0], tokenId:p[1], type:(p[2]||'ERC721').toUpperCase(), name:''}); } else { bad++; }
+  });
+  if(rows.length===0 && bad===0){ W.nfts=[]; renderNfts(); setStatus('nftSummary','<strong>NFTは0件です。</strong>入力が空でした。残っているNFTが本当に無い場合は、救出できるNFTはありません。委任だけ外したい人は、ステップ3のパターンBを見てください。','warn'); return; }
+  if(rows.length===0){ showErr('nftErr','正しい形式の行がありませんでした。「0xアドレス,TokenID,ERC721」の形で入力してください。'); return; }
+  W.nfts = rows; renderNfts();
+  if(bad>0){ showErr('nftErr', bad+' 行は形式が違うため読み込めませんでした。読み込めたのは '+rows.length+' 件です。'); }
+});
+$('csvBtn').addEventListener('click', function(){
+  var csv='contract,tokenId,type,name\n'+W.nfts.map(function(n){ return n.contract+','+n.tokenId+','+n.type+',"'+String(n.name||'').replace(/"/g,'""')+'"'; }).join('\n');
+  download('nfts.csv', csv, 'text/csv');
+});
+
+/* ---------- MetaMask helpers ---------- */
+/* MetaMask detection: injection can be late, and on file:// pages the
+   extension only injects when "Allow access to file URLs" is ON.
+   So: check repeatedly, listen for EIP-6963 announcements, and explain
+   the file:// permission case instead of just saying "not installed". */
+var MM6963 = null;
+try{
+  window.addEventListener('eip6963:announceProvider', function(ev){
+    var d = ev && ev.detail;
+    if(d && d.provider && d.info && (/metamask/i.test(d.info.name||'') || d.info.rdns==='io.metamask')){ MM6963 = d.provider; updateMmBox(); }
+  });
+}catch(e){}
+function findEthProvider(){
+  if(MM6963) return MM6963;
+  if(typeof window==='undefined' || !window.ethereum) return null;
+  var eth = window.ethereum;
+  if(eth.providers && eth.providers.length){
+    for(var i=0;i<eth.providers.length;i++){ if(eth.providers[i].isMetaMask) return eth.providers[i]; }
+    return eth.providers[0];
+  }
+  return eth;
+}
+function hasMM(){ return !!findEthProvider(); }
+function isFilePage(){ try{ return window.location && window.location.protocol==='file:'; }catch(e){ return false; } }
+function mmNotFoundMessage(){
+  if(isFilePage()){
+    return 'MetaMaskが検出できません。入っているのに出る場合は、ファイルへのアクセス許可がオフになっています。Chromeのアドレスバーに chrome://extensions/ と入力 → MetaMaskの「詳細」→「ファイルの URL へのアクセスを許可する」をオンにして、このページを再読み込み（F5）してください。';
+  }
+  return 'MetaMaskが検出できません。ChromeにMetaMask拡張機能が入っているか、有効になっているかを確認し、このページを再読み込みしてください。Museアプリ内のプレビューでは拡張機能が動かないため、その場合はファイルをPCにダウンロードしてChromeで開いてください。入っていない場合は公式サイト metamask.io/download から入れてください。';
+}
+function updateMmBox(){
+  var box=$('noMmBox'); if(!box) return;
+  var p=findEthProvider();
+  var fileHelp=$('mmFileHelp'), installHelp=$('mmInstallHelp'), foundHelp=$('mmFoundHelp'), diag=$('mmDiag'), title=$('mmBoxTitle');
+  if(p){
+    box.style.background='var(--green-soft)'; box.style.borderColor='#a6f4c5';
+    if(title) title.textContent='✅ MetaMaskを検出しました';
+    if(diag) diag.textContent = (p.isMetaMask ? 'MetaMask拡張機能とつながっています。' : 'ウォレット拡張機能とつながっています。') + 'このまま下のボタンから接続できます。';
+    if(fileHelp) fileHelp.style.display='none';
+    if(installHelp) installHelp.style.display='none';
+    if(foundHelp) foundHelp.style.display='block';
+    return true;
+  }
+  box.style.background=''; box.style.borderColor='';
+  if(title) title.textContent='⚠️ MetaMaskがまだ検出できていません';
+  if(foundHelp) foundHelp.style.display='none';
+  if(isFilePage()){
+    if(diag) diag.textContent='いまこのページは「ファイル（file://）」として開かれています。MetaMaskが入っていても、下の許可設定がオフだと検出できません。';
+    if(fileHelp) fileHelp.style.display='block';
+    if(installHelp) installHelp.style.display='none';
+  }else{
+    if(diag) diag.textContent='MetaMask拡張機能が入ったChromeで開いているか確認してください（Museアプリ内のプレビューでは検出できません）。';
+    if(fileHelp) fileHelp.style.display='none';
+    if(installHelp) installHelp.style.display='block';
+  }
+  return false;
+}
+function waitForMM(timeoutMs){
+  return new Promise(function(resolve){
+    if(findEthProvider()){ resolve(findEthProvider()); return; }
+    try{ window.dispatchEvent(new Event('eip6963:requestProvider')); }catch(e){}
+    var started=Date.now();
+    function onInit(){ check(); }
+    window.addEventListener('ethereum#initialized', onInit);
+    var timer=setInterval(check, 150);
+    function check(){
+      var p=findEthProvider();
+      if(p || Date.now()-started>=timeoutMs){
+        clearInterval(timer);
+        window.removeEventListener('ethereum#initialized', onInit);
+        resolve(p||null);
+      }
+    }
+    check();
+  });
+}
+function hasEthers(){ return typeof ethers!=='undefined'; }
+function mmError(id, msg){ showErr(id, msg); }
+async function getProviderSigner(){
+  var eth = await waitForMM(3000);
+  updateMmBox();
+  if(!eth) throw new Error(mmNotFoundMessage());
+  if(!hasEthers()) throw new Error('必要な部品（ethers）の読み込みに失敗しました。ネット接続を確認して、ページを再読み込みしてください。');
+  var provider = new ethers.BrowserProvider(eth);
+  await ensurePolygon(provider, eth);
+  var signer = await provider.getSigner();
+  return { provider:provider, signer:signer, address: await signer.getAddress() };
+}
+async function ensurePolygon(provider, eth){
+  eth = eth || findEthProvider();
+  var net = await provider.getNetwork();
+  if(Number(net.chainId)===137) return;
+  try{
+    await eth.request({ method:'wallet_switchEthereumChain', params:[{chainId:'0x89'}] });
+  }catch(e){
+    if(e && e.code===4902){
+      await eth.request({ method:'wallet_addEthereumChain', params:[{ chainId:'0x89', chainName:'Polygon Mainnet', nativeCurrency:{name:'POL',symbol:'POL',decimals:18}, rpcUrls:['https://polygon-bor-rpc.publicnode.com'], blockExplorerUrls:['https://polygonscan.com'] }] });
+    } else { throw new Error('ネットワークをPolygonに切り替えてください（MetaMask上部で Polygon Mainnet を選択）。'); }
+  }
+}
+updateMmBox();
+waitForMM(3500).then(function(){ updateMmBox(); });
+window.addEventListener('load', function(){ waitForMM(2000).then(function(){ updateMmBox(); }); });
+var recheckBtn=$('recheckMmBtn');
+if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
+  recheckBtn.disabled=true; recheckBtn.textContent='チェック中…';
+  var p = await waitForMM(3000);
+  updateMmBox();
+  if(!p){ showErr('deployErr', mmNotFoundMessage()); }
+  recheckBtn.disabled=false; recheckBtn.textContent='もう一度チェックする';
+}); }
+
+/* ---------- Step 3: pattern choice ---------- */
+(function(){
+  var rec=$('choiceRecommend'); if(!rec) return;
+  function setRec(inner, targetId){
+    rec.innerHTML='<span class="dot"></span><span>'+inner+'</span>';
+    var a=$('patternA'), b=$('patternB');
+    if(a) a.style.outline='';
+    if(b) b.style.outline='';
+    var t=targetId?$(targetId):null;
+    if(t) t.style.outline='3px solid var(--amber)';
+  }
+  var y=$('qYes'), n=$('qNo');
+  if(y) y.addEventListener('click', function(){ setRec('→ <strong>パターンA</strong>がおすすめです。鍵が漏れている前提で、資産を新しいウォレットへ移しましょう。','patternA'); });
+  if(n) n.addEventListener('click', function(){ setRec('→ まず<strong>パターンB</strong>を試すのがおすすめです（委任だけを外します）。外れなかった場合や、NFTも移したい場合はパターンAを使ってください。','patternB'); });
+})();
+</script></script>
+
+
+
+
+
+
+<script>
+/* step-flow controller v4 (added 2026-11-19) */
+(function(){
+  var secs=[].slice.call(document.querySelectorAll('#intro,#step0,#step1,#step2,#step3,#step4,#step5,#step6,#step7'));
+  secs.forEach(function(s){ s.classList.add('stepsec'); });
+  var GUIDE=[
+    {sec:'intro', el:'#intro', text:'まず、この説明を読んでください。分かったら、下の「次へ →」を押して'},
+    {sec:'step0', el:'#step0', text:'準備：新しいウォレット（シードフレーズが新品のもの）を用意して、その新しいウォレットにだけ POL を 0.3 ほど入れて'},
+    {sec:'step0', el:'#step0', text:'やられたウォレットには、絶対にお金を送らないで。あと、やられたウォレットの秘密鍵のありかを確かめて（MetaMaskの「アカウントの詳細」→「秘密鍵を表示」）'},
+    {sec:'step1', el:'#addr', text:'やられたウォレットのアドレスを貼り付けて'},
+    {sec:'step1', el:'#runBtn', text:'「確認する →」を押して。結果で、進み方が分かれます'},
+    {sec:'step3', el:'#choiceQ', key:'q', text:'質問に答えて（ボタンを1つ押して）。答えたら「次へ →」を押して。あなた向きの進み方に進みます'},
+    {sec:'step2', el:'#alchemyKey', key:'n1', text:'AlchemyのAPIキーを貼り付けて（NFTが多い人は必須です。無い人は、そのまま次へ）'},
+    {sec:'step2', el:'#nftBtn', text:'APIキーを入れた人だけ「NFTを取得する →」を押して（無い人は押さずに次へ）'},
+    {sec:'step2', el:'#manualNfts', text:'キーが無い人：下の欄に「コントラクトアドレス,TokenID,ERC721」の形で、1行に1件ずつ書いて（無い人は空のまま次へ）'},
+    {sec:'step2', el:'#manualBtn', key:'n4', text:'キーが無い人：「リストに反映する」を押して（空の人も押してOKです。0件の案内が出ます）'},
+    {sec:'step3', el:'#dlKitBtn', key:'a1', text:'パターンA：まず「専用キット（ZIP）をダウンロード」を押して'},
+    {sec:'step3', el:'#patternA', key:'a2', text:'ダウンロードしたZIPを右クリック→「すべて展開」で解凍して、中の READ_FIRST.txt（まず読んでください）を開いて読んで'},
+    {sec:'step3', el:'#patternA', key:'a3', text:'START.bat をダブルクリック（青い画面が出たら「詳細情報」→「実行」）。ここからはキットの黒い画面が1つずつ聞いてくるので、答えていってください。キットが終わったら、このページに戻って「次へ →」を押して'},
+    {sec:'step3', el:'#patternB', key:'b1', text:'パターンB：ここに書いてある通りに、MetaMaskで委任のスイッチをオフにして'},
+    {sec:'step1', el:'#runBtn', key:'fin', text:'最後の確認：「確認する →」をもう一度押して、委任が消えていれば終わりです'}
+  ];
+  var mode='showall', gi=0;
+  var head=document.createElement('div'); head.className='gd-head';
+  head.innerHTML='<div class="gd-modebar"><span class="cap">進め方：</span>'
+    +'<button type="button" class="gd-mbtn" id="gdModeGuide">ガイド版（1つずつ進む・おすすめ）</button>'
+    +'<button type="button" class="gd-mbtn" id="gdModeAll">自力版（全部表示・上級者向け）</button>'
+    +'<button type="button" class="gd-reset" id="gdReset">入力を全部消して最初から</button></div>';
+  var bar=document.createElement('div'); bar.className='gd-bar'; bar.id='gdBar';
+  bar.innerHTML='<div class="gd-bar-in"><div class="gd-prog" id="gdProg"></div>'
+    +'<div class="gd-text" id="gdText"></div>'
+    +'<div class="gd-btns"><button type="button" class="btn btn-ghost" id="gdBack">← 戻る</button>'
+    +'<button type="button" class="btn btn-primary" id="gdNext">次へ →</button></div></div>';
+  var step0=document.getElementById('intro')||document.getElementById('step0');
+  step0.parentNode.insertBefore(head, step0);
+  document.body.appendChild(bar);
+  var progLinks=[].slice.call(document.querySelectorAll('.side .prog a'));
+  function clearHl(){ [].slice.call(document.querySelectorAll('.gd-hl')).forEach(function(e){ e.classList.remove('gd-hl'); }); }
+  function render(){
+    document.getElementById('gdModeGuide').classList.toggle('on', mode==='guide');
+    document.getElementById('gdModeAll').classList.toggle('on', mode==='showall');
+    document.body.classList.toggle('showall', mode==='showall');
+    document.body.classList.toggle('guide', mode==='guide');
+    var prac=document.getElementById('practice');
+    if(prac) prac.classList.toggle('gd-hidden', mode==='guide');
+    bar.style.display = (mode==='guide') ? 'block' : 'none';
+    clearHl();
+    if(mode==='guide'){
+      var item=GUIDE[gi];
+      secs.forEach(function(s){ s.classList.toggle('active', s.id===item.sec); });
+      document.getElementById('gdProg').textContent='ガイド '+(gi+1)+' / '+GUIDE.length;
+      var txt=item.text;
+      if(item.key==='q'){
+        var dg=diagState();
+        if(dg==='unknown') txt='確認の結果：知らない委任が付いていました。危ないので、進み方はパターンA（キットで救出）です。このまま「次へ →」を押して';
+        else if(dg==='official') txt='確認の結果：公式の委任（MetaMaskの機能）でした。秘密鍵を教えた・怪しいサイトに入力した心当たりがある人は「ある・わからない」、ない人は「ない」を押して。押したら「次へ →」';
+        else if(dg==='none') txt='確認の結果：委任は付いていませんでした。秘密鍵を教えた・怪しいサイトに入力した心当たりがある人は「ある・わからない」、ない人は「ない」を押して。押したら「次へ →」';
+        else txt='先にステップ1で「確認する →」を押して、結果を出してください（「← 戻る」で戻れます）。結果と、この質問の答えで進み方が決まります';
+      }
+      if(item.key==='fin' && route()==='OK') txt='あなたは「問題なし」の場合でした。救出は要りません。このページを閉じて大丈夫です';
+      document.getElementById('gdText').textContent=txt;
+      document.getElementById('gdBack').disabled = (gi===0);
+      document.getElementById('gdNext').textContent = (gi===GUIDE.length-1) ? '完了（全部表示に戻る）' : '次へ →';
+      progLinks.forEach(function(a){ a.classList.toggle('gd-cur', a.getAttribute('href')==='#'+item.sec); });
+      var sec=document.getElementById(item.sec);
+      var target = item.el ? document.querySelector(item.el) : sec;
+      if(target){
+        var d = target.closest ? target.closest('details') : null;
+        if(d) d.open = true;
+        target.classList.add('gd-hl');
+      }
+      setTimeout(function(){ if(sec) sec.scrollIntoView({block:'start', behavior:'smooth'}); }, 60);
+    } else {
+      secs.forEach(function(s){ s.classList.remove('active'); });
+      progLinks.forEach(function(a){ a.classList.remove('gd-cur'); });
+    }
+  }
+  document.getElementById('gdModeGuide').addEventListener('click', function(){ mode='guide'; render(); });
+  document.getElementById('gdModeAll').addEventListener('click', function(){ mode='showall'; render(); });
+  document.getElementById('gdReset').addEventListener('click', function(){
+    if(window.confirm('入力した内容を全部消して、最初からやり直しますか？\n（チェーン上で実行済みの操作は取り消せません）')){ location.reload(); }
+  });
+  function idxOf(k){ for(var i=0;i<GUIDE.length;i++){ if(GUIDE[i].key===k) return i; } return -1; }
+  function diagState(){
+    var v=document.getElementById('verdict');
+    if(!v) return null;
+    if(v.classList.contains('danger')) return 'unknown';
+    if(v.classList.contains('warn')) return 'official';
+    if(v.classList.contains('ok')) return 'none';
+    return null;
+  }
+  var ans=null;
+  var qy=document.getElementById('qYes'), qn=document.getElementById('qNo');
+  if(qy) qy.addEventListener('click', function(){ ans='yes'; });
+  if(qn) qn.addEventListener('click', function(){ ans='no'; });
+  function route(){
+    var d=diagState();
+    if(d==='unknown') return 'A';
+    if(ans==='yes') return 'A';
+    if(ans===null) return null;
+    if(d==='official') return 'B';
+    if(d==='none') return 'OK';
+    return null;
+  }
+  document.getElementById('gdNext').addEventListener('click', function(){
+    if(gi>=GUIDE.length-1){ mode='showall'; render(); return; }
+    var k=GUIDE[gi].key;
+    if(k==='q'){ var r=route(); if(r===null){ render(); return; } gi = (r==='A') ? idxOf('n1') : (r==='B') ? idxOf('b1') : idxOf('fin'); }
+    else if(k==='n4'){ gi = idxOf('a1'); }
+    else if(k==='a3'){ gi = idxOf('fin'); }
+    else { gi++; }
+    render();
+  });
+  document.getElementById('gdBack').addEventListener('click', function(){
+    if(gi<=0) return;
+    var k=GUIDE[gi].key;
+    if(k==='n1' || k==='b1'){ gi = idxOf('q'); }
+    else if(k==='a1'){ gi = idxOf('n4'); }
+    else if(k==='fin'){ var r=route(); gi = (r==='B') ? idxOf('b1') : (r==='OK') ? idxOf('q') : idxOf('a3'); }
+    else { gi--; }
+    render();
+  });
+  progLinks.forEach(function(a){
+    a.addEventListener('click', function(ev){
+      if(mode!=='guide') return;
+      var id=(a.getAttribute('href')||'').slice(1);
+      for(var i=0;i<GUIDE.length;i++){ if(GUIDE[i].sec===id){ ev.preventDefault(); gi=i; render(); return; } }
+      ev.preventDefault();
+    });
+  });
+  render();
+})();
+</script>
+</body>
+</html>
