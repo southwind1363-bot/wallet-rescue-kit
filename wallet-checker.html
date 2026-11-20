@@ -186,13 +186,13 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
 .gd-hl{outline:3px solid var(--amber);outline-offset:3px;border-radius:8px}
 .side .prog a.gd-cur{color:var(--teal);font-weight:800}
 </style>
-</head>
+<style>.crit{color:#d92d20;font-weight:800}.crit-l{color:#ff9d8f;font-weight:800}</style></head>
 <body>
 <div class="wrap">
   <section class="hero">
     <div>
       <h1>ウォレット救出キット<br><span>デスクトップ版・オールインワン</span></h1>
-      <p>このページで、ウォレットの確認と「進み方の選択」を行います。実行は、状況に合わせて2つの方法（パターンA／パターンB）から選びます。上から順番に進めるウィザード形式です。誰でも迷わないよう、各ステップに「なぜやるのか」「ボタンを押すと何が起きるか」「MetaMaskの画面で何を確認するか」「失敗したらどうするか」まで細かく書いてあります。<strong style="color:#fff">なお、救出できるのは「まだウォレットに残っている分」だけです。すでに攻撃者のウォレットへ移された分は、この方法では戻せません。</strong>詳しくはすぐ下の早見表を見てください。</p>
+      <p>このページで、ウォレットの確認と「進み方の選択」を行います。実行は、状況に合わせて2つの方法（パターンA／パターンB）から選びます。上から順番に進めるウィザード形式です。誰でも迷わないよう、各ステップに「なぜやるのか」「ボタンを押すと何が起きるか」「MetaMaskの画面で何を確認するか」「失敗したらどうするか」まで細かく書いてあります。<strong style="color:#fff">なお、救出できるのは「まだウォレットに残っている分」だけです。<strong class="crit">すでに攻撃者のウォレットへ移された分は、この方法では戻せません。</strong></strong>詳しくはすぐ下の早見表を見てください。</p>
       <div class="badges">
         <span class="badge"><i></i> 確認と選択はこのページで</span>
         <span class="badge"><i></i> 進み方は2つから選択</span>
@@ -299,11 +299,11 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
         <p class="sub">ここが一番大事です。途中で「あれがない」と止まると、署名のNonceがズレたり、攻撃者に先を越されたりします。全部そろってからステップ1へ進んでください。これは確認リストです（チェックを保存する仕組みはありません。目で確認してください）。</p>
         <ul class="prep">
           <li><span class="n">1</span><div><strong>被害ウォレットの「秘密鍵かシードフレーズ」を、あなた自身がまだ知っていること</strong><p>これが無いと署名ができず、救出できません。確認だけなら知らなくてもできますが、実行（パターンA）には必須です。※このページやチャットに貼る必要は一切ありません。手元にあるかだけ確認してください。</p></div></li>
-          <li><span class="n">2</span><div><strong>新しい「安全なウォレット」を1つ作る</strong><p>MetaMaskで新規作成した、誰にも触られていないウォレットです。これが資産の避難先になります。作り方が一番大事です：MetaMaskの「アカウントを追加」で作る別アカウントは、被害ウォレットと<strong>同じシード</strong>から作られるので、安全ではありません。必ず<strong>新しいシードフレーズが発行される作り方</strong>で、新しいウォレットを作ってください。例：別のブラウザ（普段がChromeならEdge）にもう1つMetaMaskを入れて「新規ウォレットを作成」する、またはスマホのMetaMaskアプリで新規作成する。新しいシードフレーズは紙に書いてオフライン保管し、そのアドレス（0x…）をメモしてください。</p></div></li>
-          <li><span class="n">3</span><div><strong>安全なウォレットに、少額のPOLを入れておく</strong><p>救出作業のガス代（手数料）は安全なウォレットが払います。Polygonなら目安として0.3 POLを用意してください（通常はその半分以下で足ります）。取引所から送るか、別の安全なウォレットから送ってください。<strong>絶対に、被害ウォレットへは送らないでください</strong>（入れた瞬間に攻撃者の委任で盗まれる恐れがあります）。</p></div></li>
+          <li><span class="n">2</span><div><strong>新しい「安全なウォレット」を1つ作る</strong><p>MetaMaskで新規作成した、誰にも触られていないウォレットです。これが資産の避難先になります。作り方が一番大事です：MetaMaskの「アカウントを追加」で作る別アカウントは、被害ウォレットと<strong class="crit">同じシード</strong>から作られるので、<strong class="crit">安全ではありません。必ず新しいシードフレーズが発行される作り方で</strong>、新しいウォレットを作ってください。例：別のブラウザ（普段がChromeならEdge）にもう1つMetaMaskを入れて「新規ウォレットを作成」する、またはスマホのMetaMaskアプリで新規作成する。新しいシードフレーズは紙に書いてオフライン保管し、そのアドレス（0x…）をメモしてください。</p></div></li>
+          <li><span class="n">3</span><div><strong>安全なウォレットに、少額のPOLを入れておく</strong><p>救出作業のガス代（手数料）は安全なウォレットが払います。Polygonなら目安として0.3 POLを用意してください（通常はその半分以下で足ります）。取引所から送るか、別の安全なウォレットから送ってください。<strong class="crit">絶対に、被害ウォレットへは送らないでください</strong>（入れた瞬間に攻撃者の委任で盗まれる恐れがあります）。</p></div></li>
           <li><span class="n">4</span><div><strong>PCに Chrome（またはEdge）と MetaMask を入れる</strong><p>MetaMaskは公式サイト metamask.io からブラウザ拡張機能を入れます。パターンBを使う場合は、被害ウォレットをこのMetaMaskで表示できる状態にしてください。インポートの手順：MetaMaskを開く → アカウントの切り替え →「アカウントを追加」→「秘密鍵をインポート」（表示はバージョンで少し違います）→ 被害ウォレットの秘密鍵を貼る。これはMetaMaskの中だけの操作で、このページに鍵を入力することはありません。パターンAではMetaMaskへのインポートは不要です。</p><p style="margin-top:6px">このページ自体はMetaMaskと接続しません（確認は公開情報の読み取りだけです）。MetaMaskを使うのは、パターンBの操作のときだけです。</p></div></li>
           <li><span class="n">5</span><div><strong>MetaMaskのネットワークを Polygon に切り替えられるようにしておく</strong><p>パターンBの操作は、ネットワーク（Polygon）ごとに行います。MetaMask上部のネットワーク名で「Polygon Mainnet」に切り替えられます。チェーンIDは 137 です。</p></div></li>
-          <li><span class="n">6</span><div><strong>（ステップ2で使う）Alchemyの無料APIキーを取る ※任意ですが推奨</strong><p>NFTを自動で全部リストにするためのキーです。取り方：下のリンクからAlchemyの公式サイトで無料アカウントを作成 → ログイン後に「Apps」→「Create new app」→ Chainは Polygon、Networkは Polygon Mainnet → 作成後に「API Key」を表示してコピー（32文字ほどの英数字です。<strong>https:// で始まる長いURLはキーではない</strong>ので、コピーするのはキーだけにしてください）。キーはステップ2の欄にだけ貼ります（保存されません）。キーが無くても、PolygonScanで手作業でリストを作って進めることはできます。</p><p style="margin-top:8px"><a href="https://dashboard.alchemy.com/signup" target="_blank" rel="noopener noreferrer"><strong>→ Alchemyに無料登録する（公式サイト）</strong></a><br><a href="https://dashboard.alchemy.com" target="_blank" rel="noopener noreferrer">すでにアカウントがある方はこちら（ダッシュボードを開く）</a><span style="display:block;margin-top:4px">※開くのは公式ドメイン（dashboard.alchemy.com）だけです。似た名前の別サイトで登録しないでください。クレジットカードは不要です。</span></p></div></li>
+          <li><span class="n">6</span><div><strong>（ステップ2で使う）Alchemyの無料APIキーを取る ※任意ですが推奨</strong><p>NFTを自動で全部リストにするためのキーです。取り方：下のリンクからAlchemyの公式サイトで無料アカウントを作成 → ログイン後に「Apps」→「Create new app」→ Chainは Polygon、Networkは Polygon Mainnet → 作成後に「API Key」を表示してコピー（32文字ほどの英数字です。<strong>https:// で始まる長いURLはキーではない</strong>ので、コピーするのはキーだけにしてください）。キーはステップ2の欄にだけ貼ります（保存されません）。キーが無くても、PolygonScanで手作業でリストを作って進めることはできます。</p><p style="margin-top:8px"><a href="https://dashboard.alchemy.com/signup" target="_blank" rel="noopener noreferrer"><strong>→ Alchemyに無料登録する（公式サイト）</strong></a><br><a href="https://dashboard.alchemy.com" target="_blank" rel="noopener noreferrer">すでにアカウントがある方はこちら（ダッシュボードを開く）</a><span style="display:block;margin-top:4px">※<strong class="crit">開くのは公式ドメイン（dashboard.alchemy.com）だけです。似た名前の別サイトで登録しないでください。</strong>クレジットカードは不要です。</span></p></div></li>
           <li><span class="n">7</span><div><strong>時間と心の準備：30〜60分、途中で席を立たない</strong><p>パターンAは、始めたら最後まで一気に進めてください。途中で被害ウォレットで他の取引をすると、手順がずれて失敗します。あわてて知らないサイトの署名に応じるのは厳禁です。</p></div></li>
           <li><span class="n">8</span><div><strong>プライバシーについて（このページが外部と通信するもの）</strong><p>このページは、表示のために外部の配信サーバー（jsDelivr）からプログラム部品（ethers.js）を、Google Fontsからフォントを読み込みます。その際、あなたのIPアドレスがそれらの運営者に伝わります。それ以外で、このページが入力内容を保存したり、作者のサーバーへ送ったりすることはありません。確認のために入力したアドレスは、チェーンの公開窓口（RPC）と、NFT取得のときだけAlchemyに送られます。</p></div></li>
         </ul>
@@ -368,7 +368,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
 
         <label class="label" for="alchemyKey">Alchemy APIキー（ステップ0の手順6で取得）</label>
         <input class="txtin" id="alchemyKey" type="password" autocomplete="off" spellcheck="false" placeholder="AlchemyのAPIキーを貼り付け（保存されません）">
-        <p class="hint"><strong>ここに秘密鍵やシードフレーズは絶対に入れないでください。</strong>入れるのはAlchemyのキーだけです。まだキーがない場合は、<a href="https://dashboard.alchemy.com/signup" target="_blank" rel="noopener noreferrer">Alchemy公式サイトで無料取得</a>できます（登録後に「Apps」→「Create new app」、Chainは Polygon、Networkは Polygon Mainnet）。登録画面は英語の場合があります（ブラウザの設定によっては日本語で表示されます）。キーは、ログイン後の「Apps」で作ったアプリを開き、「API Key」の表示で出てくる、32文字ほどの英数字です。<strong>https:// で始まる長いURLはキーではありません</strong>ので、貼らないでください。すでにアカウントがある方は<a href="https://dashboard.alchemy.com" target="_blank" rel="noopener noreferrer">ダッシュボード</a>からキーを確認できます。詳しい手順はステップ0の手順6にあります。</p>
+        <p class="hint"><strong><strong class="crit">ここに秘密鍵やシードフレーズは絶対に入れないでください。</strong></strong>入れるのはAlchemyのキーだけです。まだキーがない場合は、<a href="https://dashboard.alchemy.com/signup" target="_blank" rel="noopener noreferrer">Alchemy公式サイトで無料取得</a>できます（登録後に「Apps」→「Create new app」、Chainは Polygon、Networkは Polygon Mainnet）。登録画面は英語の場合があります（ブラウザの設定によっては日本語で表示されます）。キーは、ログイン後の「Apps」で作ったアプリを開き、「API Key」の表示で出てくる、32文字ほどの英数字です。<strong>https:// で始まる長いURLはキーではありません</strong>ので、貼らないでください。すでにアカウントがある方は<a href="https://dashboard.alchemy.com" target="_blank" rel="noopener noreferrer">ダッシュボード</a>からキーを確認できます。詳しい手順はステップ0の手順6にあります。</p>
         <p class="hint">これはウォレットの秘密鍵ではありません。Alchemyという情報サービスの鍵です。それでも他人には見せないでください。入力はこのページを開いている間だけメモリに置かれ、閉じれば消えます。</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
           <button class="btn btn-primary" id="nftBtn" type="button"><span class="spin" id="nftSpin"></span><span id="nftLabel">NFTを取得する →</span></button>
@@ -392,7 +392,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
           <p>ステップ1の確認が終わると、そのアドレス専用のリンクがここに出ます。画像つきで見たい場合はOpenSea、移動履歴を正確に見たい場合はPolygonScanが向いています。</p>
           <div id="nftLinks"><p style="color:var(--muted);font-size:14.5px;margin:8px 0 0">まずステップ1の「確認する」を実行してください。</p></div>
           <ul style="color:var(--muted);font-size:14.5px;padding-left:20px;margin:10px 0 0">
-            <li>見覚えのないNFTがあっても、<strong style="color:var(--text)">触らず・リンクを開かず・承認（Approve）しない</strong>でください。詐欺NFTの可能性があります</li>
+            <li>見覚えのないNFTがあっても、<strong style="color:var(--text)"><strong class="crit">触らず・リンクを開かず・承認（Approve）しない</strong></strong>でください。詐欺NFTの可能性があります</li>
             <li>「すでに攻撃者へ移されてしまったNFT」はここには出ません。出てきたものが「まだ救出できる分」です</li>
           </ul>
         </details>
@@ -411,7 +411,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
             <button class="btn btn-ghost btn-sm" id="qNo" type="button">ない</button>
           </div>
           <div class="status-line" id="choiceRecommend" style="margin-top:10px"><span class="dot"></span><span>ボタンを押すと、おすすめのパターンを表示します。</span></div>
-          <p style="margin:10px 0 0">「ある・わからない」の場合は、鍵が漏れている前提で動きます。この場合パターンBは選ばないでください（委任を外しても、漏れた鍵でまた操作されてしまいます）。</p>
+          <p style="margin:10px 0 0">「ある・わからない」の場合は、鍵が漏れている前提で動きます。<strong class="crit">この場合パターンBは選ばないでください</strong>（委任を外しても、漏れた鍵でまた操作されてしまいます）。</p>
         </div>
 
         <div id="patternA" style="margin-top:18px">
@@ -455,7 +455,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
         <ol class="do-list">
           <li><strong>ステップ1に戻り、被害ウォレットでもう一度「確認する →」を押す</strong><span class="mm">パターンBの場合：判定が「委任は付いていません」になっていれば、委任の解除は完了です。パターンAの場合：専用キットが委任を解除まで行うので、同じく「委任は付いていません」になるはずです。まだ委任が残っていたら、選んだパターンの作業が最後まで終わっているか確認してください。</span></li>
           <li><strong>安全なウォレットで、回収したNFTが見えるか確認する</strong><span class="mm">パターンAで救出した場合のみ。OpenSeaやPolygonScanで安全なウォレットのアドレスを開き、ステップ2のリストと数が合うか見てください。</span></li>
-          <li><strong>被害ウォレットは、二度と使わない</strong><span class="mm">鍵やシードが漏れた可能性がある場合、委任を解除しても漏れた鍵は漏れたままです。資産が全部移ったことを確認したら、そのウォレットには二度と入金しないでください。今後は安全なウォレットだけを使います。</span></li>
+          <li><strong class="crit">被害ウォレットは、二度と使わない</strong><span class="mm">鍵やシードが漏れた可能性がある場合、委任を解除しても漏れた鍵は漏れたままです。資産が全部移ったことを確認したら、<strong class="crit">そのウォレットには二度と入金しないでください。</strong>今後は安全なウォレットだけを使います。</span></li>
           <li><strong>漏れた原因を思い出して、同じことを繰り返さない</strong><span class="mm">「スマートアカウント有効化／アップグレード」などと称する署名、知らないサイトでの承認（Approve）や委任の署名は、今後は内容が分かるまで絶対に進まないでください。見覚えのないNFTやトークンは、触らず・開かず・承認しないのが鉄則です。</span></li>
         </ol>
         <div class="note-box"><b>検証について（正直にお伝えします）：</b>パターンAの方式（委任の付け替え→移転の許可→委任の解除→回収を、取引を分けて行う方法）は、2026-11-19に実際のPolygonチェーン上で「乗っ取られた状態→救出完了」までを通しで実行し、残っていたNFTを回収できることを確認済みです。逆に、手順を1つの取引にまとめる方式は失敗することも確認済みです。パターンB（MetaMaskのスイッチをオフにして委任を外す方法）も、2026-11-20に実際のPolygonチェーン上でテストし、知らない委任先でも外せることを確認済みです。ただし外せるのは委任だけで、鍵が漏れている場合はパターンBだけでは直りません（その場合はパターンAで資産を移し、被害ウォレットを引退させてください）。実際の結果は、ガス代の変動やNFTの状態によって変わる場合があります。うまくいかないときは、エラーの画面をスクリーンショットに残して、詳しい人に相談してください。</div>
@@ -484,17 +484,23 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
         <details><summary>途中でページを閉じてしまいました</summary><p>ステップ2まで（確認だけ）なら、最初からやり直せば大丈夫です。パターンAの途中で止めた場合は、専用キットの案内に従ってください（途中で止めても状況は悪くなりません）。パターンBはMetaMaskの中の操作なので、このページを閉じても影響ありません。どの場合も、再開するときはまずステップ1で現状を確認してください。</p></details>
         <details><summary>このページは安全ですか？</summary><p>このページ自体は、確認（読み取り）と案内だけを行います。秘密鍵の入力欄はなく、入力した内容が作者のサーバーに送られることもありません。実行は、あなたのパソコンの中（パターンA）か、MetaMaskの中（パターンB）で完結します。詳しくはステップ0の「プライバシーについて」を見てください。</p></details>
       </section>
+    <section class="card">
+        <h2>このキットについて</h2>
+        <p>作った人：むき栗ぶろぐ（mukiguri.com）／2026-11-19 公開</p>
+        <p>自分のウォレットの救出に使うのは自由です（お金は取りません）。困っている人に渡すときは、このページのURLをそのまま教えてください。</p>
+        <p>ただし、丸ごとコピーして「自分が作ったもの」として配ったり、書き換えて配ったりしないでください。</p>
+      </section>
     </main>
 
     <aside class="side">
       <div class="safe">
         <h2>🔒 安全ルール（絶対）</h2>
         <ul>
-          <li><strong>秘密鍵・シードフレーズは誰にも教えない。</strong>AIにも、サポートを名乗る人にも。このページにも入力欄はありません。</li>
+          <li><strong class="crit-l">秘密鍵・シードフレーズは誰にも教えない。</strong>AIにも、サポートを名乗る人にも。このページにも入力欄はありません。</li>
           <li>署名は<strong>パターンAの専用キットの中か、MetaMaskの画面だけ</strong>。内容が分からない署名は「拒否」が正解です。</li>
           <li>被害ウォレットに<strong>ガス代を入れない</strong>（パターンAの決まりです。ガス代は安全なウォレットで用意します）。例外はパターンBのときだけで、その場合も入れるのは最小限にしてください。</li>
-          <li>見覚えのないNFTやトークンの<strong>リンクを開かない・承認しない</strong>。</li>
-          <li>専用キットは<strong>このページのステップ3からダウンロードしたものだけ</strong>を使う。出所の分からないZIPは開かない。</li>
+          <li>見覚えのないNFTやトークンの<strong class="crit-l">リンクを開かない・承認しない</strong>。</li>
+          <li>専用キットは<strong class="crit-l">このページのステップ3からダウンロードしたものだけ</strong>を使う。出所の分からないZIPは開かない。</li>
           <li>アドレスは公開情報ですが、<strong>残高と結びつくのでSNSに貼らない</strong>のが無難です。</li>
         </ul>
       </div>
