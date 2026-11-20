@@ -371,7 +371,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
         <p><strong>なぜ：</strong>見覚えのない相手への許可や、「無制限」の許可が残っていると、新しい署名なしで資産を持っていかれることがあります。救出の前に、仕掛けられていないか確かめます。</p>
         <p><strong>「許可を調べる」を押すと：</strong>チェーンの公開窓口（RPC）へアドレスを送り、許可の記録を読み取って、いま現在の状態と照らし合わせて表示します。<strong>読み取りだけ</strong>で、送金も署名も起きません。APIキーなどは要りません。入力したアドレスは保存されません。</p>
         <p><strong>調べられる範囲：</strong>まず直近 約5,000,000ブロック（Polygonで約4か月分）を調べます。もっと古い分は、下のボタンで、さらに約4か月ずつ さかのぼれます。</p>
-        <p><strong>見つけられないもの：</strong>Permit（パーミット）という、署名だけで渡すタイプの許可は、チェーンに記録が残らないため、ここでは見つけられません。</p></div>
+        <p><strong>見つけられないもの：</strong>署名しただけで、まだ使われていないPermit（パーミット）は見つけられません。ただし、すでに使われたPermitは、ふつうの許可として記録が残るので、この棚卸しで見つかります。</p></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
           <button class="btn btn-primary" id="apprBtn" type="button"><span class="spin" id="apprSpin"></span><span id="apprLabel">許可を調べる →</span></button>
           <button class="btn btn-ghost" id="apprMoreBtn" type="button" disabled>もっと古い分も調べる（さらに約4か月分）</button>
@@ -380,7 +380,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
         <div class="status-line" id="apprSummary"><span class="dot"></span><span>まだ調べていません。ステップ1で確認したアドレスが対象になります（アドレス欄の内容を使います）。</span></div>
         <div id="apprList"></div>
         <div class="note-box" style="margin-top:14px"><b>見つけた許可の「取り消し」について：</b>このキットでは取り消しはしません。鍵が漏れているかもしれない財布から取り消しを送ると、犯人と取り合いになるためです。<strong>先に救出を終わらせてください。</strong>取り消しは、落ち着いてから <a href="https://revoke.cash/" target="_blank" rel="noopener noreferrer">revoke.cash</a> や <a href="https://polygonscan.com/tokenapprovalchecker" target="_blank" rel="noopener noreferrer">PolygonScanの許可チェック</a> で行えます（外部サイトです）。</div>
-        <div class="teal-box"><b>✅ ステップ1.5の完了の目印：</b>「調べ終わりました」と表示されること。要注意の許可があった場合は、救出を急いでください（進み方の目安はパターンA寄りになります）。無かった場合も、Permit型までは見えないので、油断はしないでください。</div>
+        <div class="teal-box"><b>✅ ステップ1.5の完了の目印：</b>「調べ終わりました」と表示されること。要注意の許可があった場合は、救出を急いでください（進み方の目安はパターンA寄りになります）。無かった場合も、まだ使われていないPermitまでは見えないので、油断はしないでください。</div>
       </section>
 
       <!-- STEP 2 NFT -->
