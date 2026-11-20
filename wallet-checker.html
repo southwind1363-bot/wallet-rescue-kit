@@ -136,6 +136,11 @@ button,select,input{min-height:48px}
 .nft-item b{font-size:14.5px}
 .nft-item .c{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted);word-break:break-all;grid-column:1/-1}
 .nft-item .tag{font-size:11.5px;font-weight:800;background:var(--teal-soft);color:var(--teal);border-radius:999px;padding:3px 9px;height:fit-content}
+.appr-item{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px;margin-top:10px}
+.appr-item.danger{background:var(--red-soft);border-color:#fecdca}
+.appr-item .who{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted);word-break:break-all;margin-top:4px}
+.appr-item .lim{font-weight:800}
+.appr-item .badge{display:inline-block;font-size:11.5px;font-weight:800;background:var(--red);color:#fff;border-radius:999px;padding:3px 9px;margin-left:8px;vertical-align:2px}
 details.faqd, .faq details{border-top:1px solid var(--line);padding:14px 0}
 summary{font-weight:700;cursor:pointer;min-height:36px;display:flex;align-items:center;gap:6px}
 .faq p, details.faqd p{color:var(--muted);margin:6px 0 0;font-size:14.5px}
@@ -246,6 +251,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
         <div class="flow">
           <div><b>ステップ0 準備</b><span>必要なものをそろえる。ここを飛ばすと途中で止まります</span></div>
           <div><b>ステップ1 確認</b><span>盗まれたウォレットの委任・残高・Nonceを調べる（見るだけ）</span></div>
+          <div><b>ステップ1.5 許可の棚卸し</b><span>今も生きている「許可」が残っていないか調べる（見るだけ）</span></div>
           <div><b>ステップ2 NFT一覧</b><span>残っているNFTを全部リストにする（見るだけ）</span></div>
           <div><b>ステップ3 進み方を選ぶ</b><span>質問に答えて、パターンA（専用キット）かパターンB（MetaMask内で委任を外す）を選ぶ</span></div>
           <div><b>ステップ4 最終確認</b><span>委任が消えたか確かめ、被害ウォレットを引退させる</span></div>
@@ -355,6 +361,26 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
           <div class="links" id="explorerLinks"></div>
           <div class="teal-box" style="margin-bottom:0"><b>✅ ステップ1の完了の目印：</b>上の結果カードが出て、Nonceの数字が分かれば完了です。「委任は付いていません（緑）」なら、委任の問題はありません（心配がなければ、ここで終わって大丈夫です）。ただし、秘密鍵やシードフレーズを怪しいサイトに入力した／誰かに教えた心当たりがある場合は、委任が無くても安全ではありません。ステップ3の質問から進んでください。判定が「不明な委任先への委任があります（赤）」なら、そのままステップ2へ進んでください。判定が「公式の委任（黄）」で心当たりがある場合は、無理に救出を実行する必要はありません。心当たりがない場合は、赤と同じように進めてください。</div>
         </div>
+      </section>
+
+      <!-- STEP 1.5 APPROVALS -->
+      <section class="card" id="step15">
+        <h2><span class="num" style="font-size:12.5px">1.5</span>許可（きょか）の棚卸し（見るだけ・安全）</h2>
+        <p class="sub">「許可」というのは、「この相手は、あなたのトークン（お金やNFT）を、ここまで動かしていい」という許可証のことです。昔に許可したまま忘れていると、そこから盗まれることがあります。ここでは、今も生きている許可を調べます。このステップは飛ばしても、救出は進められます。</p>
+        <div class="why"><h4>なぜやるか／押すと何が起きるか</h4>
+        <p><strong>なぜ：</strong>見覚えのない相手への許可や、「無制限」の許可が残っていると、新しい署名なしで資産を持っていかれることがあります。救出の前に、仕掛けられていないか確かめます。</p>
+        <p><strong>「許可を調べる」を押すと：</strong>チェーンの公開窓口（RPC）へアドレスを送り、許可の記録を読み取って、いま現在の状態と照らし合わせて表示します。<strong>読み取りだけ</strong>で、送金も署名も起きません。APIキーなどは要りません。入力したアドレスは保存されません。</p>
+        <p><strong>調べられる範囲：</strong>まず直近 約5,000,000ブロック（Polygonで約4か月分）を調べます。もっと古い分は、下のボタンで、さらに約4か月ずつ さかのぼれます。</p>
+        <p><strong>見つけられないもの：</strong>Permit（パーミット）という、署名だけで渡すタイプの許可は、チェーンに記録が残らないため、ここでは見つけられません。</p></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+          <button class="btn btn-primary" id="apprBtn" type="button"><span class="spin" id="apprSpin"></span><span id="apprLabel">許可を調べる →</span></button>
+          <button class="btn btn-ghost" id="apprMoreBtn" type="button" disabled>もっと古い分も調べる（さらに約4か月分）</button>
+        </div>
+        <div class="error" id="apprErr"></div>
+        <div class="status-line" id="apprSummary"><span class="dot"></span><span>まだ調べていません。ステップ1で確認したアドレスが対象になります（アドレス欄の内容を使います）。</span></div>
+        <div id="apprList"></div>
+        <div class="note-box" style="margin-top:14px"><b>見つけた許可の「取り消し」について：</b>このキットでは取り消しはしません。鍵が漏れているかもしれない財布から取り消しを送ると、犯人と取り合いになるためです。<strong>先に救出を終わらせてください。</strong>取り消しは、落ち着いてから <a href="https://revoke.cash/" target="_blank" rel="noopener noreferrer">revoke.cash</a> や <a href="https://polygonscan.com/tokenapprovalchecker" target="_blank" rel="noopener noreferrer">PolygonScanの許可チェック</a> で行えます（外部サイトです）。</div>
+        <div class="teal-box"><b>✅ ステップ1.5の完了の目印：</b>「調べ終わりました」と表示されること。要注意の許可があった場合は、救出を急いでください（進み方の目安はパターンA寄りになります）。無かった場合も、Permit型までは見えないので、油断はしないでください。</div>
       </section>
 
       <!-- STEP 2 NFT -->
@@ -510,6 +536,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
           <li><a href="#intro">はじめに</a><span>説明を先に読む</span></li>
           <li><a href="#step0">ステップ0 準備</a><span>そろえるものを確認</span></li>
           <li><a href="#step1">ステップ1 確認</a><span>委任・Nonceを見るだけ</span></li>
+          <li><a href="#step15">ステップ1.5 許可の棚卸し</a><span>残っている許可を見るだけ</span></li>
           <li><a href="#step2">ステップ2 NFT一覧</a><span>残っているNFTをリスト化</span></li>
           <li><a href="#step3">ステップ3 進み方を選ぶ</a><span>パターンA／パターンB</span></li>
           <li><a href="#step4">ステップ4 最終確認</a><span>委任が消えたか確認・引退</span></li>
@@ -653,6 +680,167 @@ $('runBtn').addEventListener('click', function(){
   });
 });
 $('addr').addEventListener('keydown', function(e){ if(e.key==='Enter'){ $('runBtn').click(); } });
+
+/* ---------- Step 1.5: approval scan (read-only, no API key) ---------- */
+var APPR = { addr:null, from:null, to:null, pairs:{}, live:[], cleared:0, running:false };
+var APPR_SPAN = 5000000, APPR_CHUNK = 250000;
+var LOG_RPCS = ['https://polygon.gateway.tenderly.co','https://polygon-bor-rpc.publicnode.com','https://polygon.drpc.org'];
+var TOPIC_APPROVAL = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925';
+var TOPIC_AFA = '0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31';
+var MAXUINT = BigInt('115792089237316195423570985008687907853269984665640564039457584007913129639935');
+function logRpc(method, params){
+  var chain = Promise.reject(new Error('start'));
+  LOG_RPCS.forEach(function(url){
+    chain = chain.catch(function(){
+      return fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:method,params:params})})
+        .then(function(r){ if(!r.ok) throw new Error('rpc'); return r.json(); })
+        .then(function(j){ if(j.error) throw new Error((j.error&&j.error.message)||'rpc error'); return j.result; });
+    });
+  });
+  return chain;
+}
+function topicAddr(a){ return '0x'+'0'.repeat(24)+a.slice(2).toLowerCase(); }
+function padAddr(a){ return a.slice(2).toLowerCase().padStart(64,'0'); }
+function ethCall(to, data){ return rpcCall(CHAINS.polygon.rpcs,'eth_call',[{to:to, data:data},'latest']); }
+function apprFetchLogs(f, t){
+  var owner = topicAddr(APPR.addr);
+  function q(topic0){ return logRpc('eth_getLogs',[{fromBlock:'0x'+f.toString(16), toBlock:'0x'+t.toString(16), topics:[topic0, owner]}]); }
+  return Promise.all([q(TOPIC_APPROVAL), q(TOPIC_AFA)]).then(function(r){ return (r[0]||[]).concat(r[1]||[]); })
+    .catch(function(){
+      if(t-f>50000){ var mid=f+Math.floor((t-f)/2); return apprFetchLogs(f,mid).then(function(a){ return apprFetchLogs(mid+1,t).then(function(b){ return a.concat(b); }); }); }
+      throw new Error('logs');
+    });
+}
+function apprCollect(lg){
+  if(!lg.topics || lg.topics.length<3) return;
+  var t0=(lg.topics[0]||'').toLowerCase();
+  var spender='0x'+lg.topics[2].slice(26);
+  var kind=(t0===TOPIC_AFA)?'AFA':'APR';
+  var key=lg.address.toLowerCase()+'|'+spender.toLowerCase()+'|'+kind;
+  APPR.pairs[key]={ token:lg.address, spender:spender, kind:kind };
+}
+function apprScanRange(fromB, toB){
+  var chunks=[]; for(var b=fromB; b<=toB; b+=APPR_CHUNK){ chunks.push([b, Math.min(b+APPR_CHUNK-1, toB)]); }
+  var done=0, failed=false;
+  function step(i){
+    if(i>=chunks.length) return Promise.resolve(!failed);
+    return apprFetchLogs(chunks[i][0], chunks[i][1]).then(function(logs){ logs.forEach(apprCollect); })
+      .catch(function(){ failed=true; })
+      .then(function(){
+        done++;
+        setStatus('apprSummary','調べています… '+Math.round(done/chunks.length*100)+'%（'+done+' / '+chunks.length+' 区間）','warn');
+        if(failed) return false;
+        return step(i+1);
+      });
+  }
+  return step(0);
+}
+function fmtAmt(v, dec){
+  try{
+    var d = BigInt(10) ** BigInt(dec);
+    var whole = v / d;
+    var frac = (v % d).toString().padStart(dec,'0').replace(/0+$/,'');
+    return frac ? whole.toString()+'.'+frac.slice(0,6) : whole.toString();
+  }catch(e){ return v.toString(); }
+}
+function decodeSym(hex){
+  try{
+    if(!hex || hex==='0x') return '';
+    var h=hex.slice(2);
+    if(h.length>=128){ var len=parseInt(h.slice(64,128),16); if(len>0 && len<=32) h=h.slice(128,128+len*2); }
+    var s='';
+    for(var i=0;i+2<=h.length;i+=2){ var c=parseInt(h.slice(i,i+2),16); if(c===0) break; s+=String.fromCharCode(c); }
+    return s.replace(/[^\x20-\x7e]/g,'').trim();
+  }catch(e){ return ''; }
+}
+function apprRecheck(){
+  var list=Object.keys(APPR.pairs).map(function(k){ return APPR.pairs[k]; });
+  var live=[], cleared=0, checked=0;
+  function one(i){
+    if(i>=list.length) return Promise.resolve();
+    var p=list[i];
+    setStatus('apprSummary','見つけた許可の「今の状態」を確認しています… '+(checked+1)+' / '+list.length,'warn');
+    var done=function(){ checked++; return one(i+1); };
+    if(p.kind==='AFA'){
+      return ethCall(p.token,'0xe985e9c5'+padAddr(APPR.addr)+padAddr(p.spender)).then(function(r){
+        if(r && BigInt(r)===BigInt(1)){ live.push({token:p.token, spender:p.spender, kind:'AFA', danger:true, limitText:'NFT全部（まとめて許可）'}); } else { cleared++; }
+      }).catch(function(){ cleared++; }).then(done);
+    }
+    return ethCall(p.token,'0xdd62ed3e'+padAddr(APPR.addr)+padAddr(p.spender)).then(function(r){
+      var v=r?BigInt(r):BigInt(0);
+      if(v<=BigInt(0)){ cleared++; return null; }
+      var unlim=(v>= (BigInt(2)**BigInt(255)));
+      return Promise.all([
+        ethCall(p.token,'0x95d89b41').catch(function(){ return null; }),
+        ethCall(p.token,'0x313ce567').catch(function(){ return null; })
+      ]).then(function(sd){
+        var sym=decodeSym(sd[0])||'トークン';
+        var dec=sd[1]?parseInt(sd[1],16):18; if(!(dec>=0&&dec<=36)) dec=18;
+        live.push({token:p.token, spender:p.spender, kind:'APR', danger:unlim, sym:sym, limitText: unlim?'無制限':(fmtAmt(v,dec)+' '+sym)});
+      });
+    }).catch(function(){ cleared++; }).then(done);
+  }
+  return one(0).then(function(){ APPR.live=live; APPR.cleared=cleared; });
+}
+function renderAppr(complete){
+  var box=$('apprList'); box.innerHTML='';
+  var dangerCount=0;
+  APPR.live.forEach(function(p){
+    if(p.danger) dangerCount++;
+    var d=document.createElement('div'); d.className='appr-item'+(p.danger?' danger':'');
+    var head=document.createElement('div');
+    var b=document.createElement('b'); b.textContent = p.kind==='AFA' ? 'NFTのまとめて許可' : ('トークンの許可（'+(p.sym||'トークン')+'）');
+    head.appendChild(b);
+    if(p.danger){ var bd=document.createElement('span'); bd.className='badge'; bd.textContent='要注意'; head.appendChild(bd); }
+    var lim=document.createElement('div'); lim.className='lim'; lim.textContent='上限：'+p.limitText;
+    var who=document.createElement('div'); who.className='who'; who.textContent='許可した相手：'+p.spender;
+    var tk=document.createElement('div'); tk.className='who'; tk.textContent=(p.kind==='AFA'?'NFTのコントラクト：':'トークンのコントラクト：')+p.token;
+    d.appendChild(head); d.appendChild(lim); d.appendChild(who); d.appendChild(tk);
+    box.appendChild(d);
+  });
+  var rangeText='調べた範囲：ブロック '+APPR.from.toLocaleString()+' 〜 '+APPR.to.toLocaleString();
+  if(!complete){
+    setStatus('apprSummary','<strong>途中までしか調べられませんでした。</strong>時間をおいて、もう一度「許可を調べる」を押してください。それでもダメな場合は、revoke.cash などで確認してください。<br>'+rangeText,'warn');
+  } else if(APPR.live.length===0){
+    setStatus('apprSummary','<strong>調べ終わりました。</strong>今も生きている許可は見つかりませんでした（調べた範囲では）。'+(APPR.cleared>0?('すでに取り消し済み・使い終わった許可が '+APPR.cleared+' 件ありましたが、今は効いていません。'):'')+'<br>'+rangeText,'on');
+  } else {
+    setStatus('apprSummary','<strong>調べ終わりました。</strong>今も生きている許可が <strong>'+APPR.live.length+' 件</strong> あります。'+(dangerCount>0?('<strong>要注意が '+dangerCount+' 件</strong>あります。見覚えのない相手なら、救出を急いでください。'):'見覚えのある相手かどうか、1件ずつ確認してください。')+'<br>'+rangeText,'warn');
+  }
+  W.approvalDanger = dangerCount>0;
+  $('apprMoreBtn').disabled = !(APPR.from>0) || APPR.running;
+}
+function apprSetBusy(b){
+  APPR.running=b;
+  $('apprBtn').disabled=b;
+  $('apprMoreBtn').disabled = b || !(APPR.from>0);
+  $('apprSpin').style.display=b?'block':'none';
+  $('apprLabel').textContent=b?'調べています…':'許可を調べる →';
+}
+function apprRun(extend){
+  hideErr('apprErr');
+  var addr=$('addr').value.trim();
+  if(!/^0x[0-9a-fA-F]{40}$/.test(addr)){ showErr('apprErr','先にステップ1で被害ウォレットのアドレスを入力してください。'); return; }
+  if(current!=='polygon'){ showErr('apprErr','許可の棚卸しはPolygonのみ対応です。チェーンをPolygonにしてください。'); return; }
+  if(!extend || APPR.addr!==addr){ APPR.addr=addr; APPR.pairs={}; APPR.live=[]; APPR.cleared=0; APPR.from=null; APPR.to=null; }
+  apprSetBusy(true);
+  var getRange;
+  if(extend && APPR.from>0){
+    var t2=APPR.from-1;
+    getRange=Promise.resolve({from:Math.max(0,t2-APPR_SPAN+1), to:t2});
+  } else {
+    getRange=logRpc('eth_blockNumber',[]).then(function(bn){ var latest=parseInt(bn,16); return {from:Math.max(0,latest-APPR_SPAN+1), to:latest}; });
+  }
+  getRange.then(function(rg){
+    if(APPR.to===null) APPR.to=rg.to;
+    return apprScanRange(rg.from, rg.to).then(function(ok){ APPR.from=rg.from; return ok; });
+  }).then(function(ok){
+    return apprRecheck().then(function(){ renderAppr(ok); });
+  }).catch(function(){
+    showErr('apprErr','調べられませんでした。少し待ってから、もう一度「許可を調べる」を押してください。');
+  }).finally(function(){ apprSetBusy(false); });
+}
+$('apprBtn').addEventListener('click', function(){ apprRun(false); });
+$('apprMoreBtn').addEventListener('click', function(){ apprRun(true); });
 
 /* ---------- Step 2: NFT list via Alchemy / manual ---------- */
 $('nftBtn').addEventListener('click', function(){
@@ -837,7 +1025,7 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
 <script>
 /* step-flow controller v4 (added 2026-11-19) */
 (function(){
-  var secs=[].slice.call(document.querySelectorAll('#intro,#step0,#step1,#step2,#step3,#step4,#step5,#step6,#step7'));
+  var secs=[].slice.call(document.querySelectorAll('#intro,#step0,#step1,#step15,#step2,#step3,#step4,#step5,#step6,#step7'));
   secs.forEach(function(s){ s.classList.add('stepsec'); });
   var GUIDE=[
     {sec:'intro', el:'#intro', text:'まず、この説明を読んでください。分かったら、下の「次へ →」を押して'},
@@ -845,6 +1033,7 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
     {sec:'step0', el:'#step0', text:'やられたウォレットには、絶対にお金を送らないで。あと、やられたウォレットの秘密鍵のありかを確かめて（MetaMaskの「アカウントの詳細」→「秘密鍵を表示」）'},
     {sec:'step1', el:'#addr', text:'やられたウォレットのアドレスを貼り付けて'},
     {sec:'step1', el:'#runBtn', text:'「確認する →」を押して。結果で、進み方が分かれます'},
+    {sec:'step15', el:'#apprBtn', key:'ap1', text:'許可の棚卸し：「許可を調べる →」を押して（少し時間がかかります）。終わったら「次へ →」を押して。飛ばしても大丈夫です'},
     {sec:'step3', el:'#choiceQ', key:'q', text:'質問に答えて（ボタンを1つ押して）。答えたら「次へ →」を押して。あなた向きの進み方に進みます'},
     {sec:'step2', el:'#alchemyKey', key:'n1', text:'AlchemyのAPIキーを貼り付けて（NFTが多い人は必須です。無い人は、そのまま次へ）'},
     {sec:'step2', el:'#nftBtn', text:'APIキーを入れた人だけ「NFTを取得する →」を押して（無い人は押さずに次へ）'},
