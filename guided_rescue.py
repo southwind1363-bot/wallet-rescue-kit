@@ -21,7 +21,7 @@
 - 安全なウォレット（別のシードフレーズで作った新しいウォレット推奨）の秘密鍵と、
   ガス代ぶんの POL（目安 0.1 POL 以上あると安心です）
 - 被害ウォレットに残っている NFT の一覧
-  （Alchemy の API キーがあれば自動取得。無ければ手入力もできます）
+  （リストの貼り付け＋自動照合が標準。Alchemy の API キーでの自動取得も選べます）
 
 対象チェーン: Polygon（チェーンID 137）
 """
@@ -47,6 +47,15 @@ ABI_BATCH = [{"name": "approveAll", "type": "function", "stateMutability": "nonp
 ABI721 = [{"name": "transferFrom", "type": "function", "stateMutability": "nonpayable",
            "inputs": [{"name": "from", "type": "address"}, {"name": "to", "type": "address"},
                       {"name": "tokenId", "type": "uint256"}], "outputs": []}]
+ABI_CHECK = [
+    {"name": "ownerOf", "type": "function", "stateMutability": "view",
+     "inputs": [{"name": "tokenId", "type": "uint256"}], "outputs": [{"type": "address"}]},
+    {"name": "balanceOf", "type": "function", "stateMutability": "view",
+     "inputs": [{"name": "account", "type": "address"}, {"name": "id", "type": "uint256"}],
+     "outputs": [{"type": "uint256"}]},
+    {"name": "name", "type": "function", "stateMutability": "view",
+     "inputs": [], "outputs": [{"type": "string"}]},
+]
 ABI1155 = [
     {"name": "balanceOf", "type": "function", "stateMutability": "view",
      "inputs": [{"name": "account", "type": "address"}, {"name": "id", "type": "uint256"}],
@@ -213,57 +222,135 @@ def step1_check(w3):
     return victim, st
 
 
+def verify_owned(w3, victim, row):
+    """チェーンで「今も本人が持っているか」を確かめる。戻り値: (持っているか, 種類)"""
+    from web3 import Web3
+    victim = Web3.to_checksum_address(victim)
+    c = w3.eth.contract(address=Web3.to_checksum_address(row["contract"]), abi=ABI_CHECK)
+
+    def as721():
+        try:
+            return c.functions.ownerOf(row["tokenId"]).call().lower() == victim.lower()
+        except Exception:
+            return False
+
+    def as1155():
+        try:
+            return c.functions.balanceOf(victim, row["tokenId"]).call() > 0
+        except Exception:
+            return False
+
+    if row["type"] == "ERC1155":
+        return as1155(), "ERC1155"
+    if row["type"] == "ERC721":
+        return as721(), "ERC721"
+    if as721():
+        return True, "ERC721"
+    if as1155():
+        return True, "ERC1155"
+    return False, "ERC721"
+
+
+def contract_name(w3, contract):
+    from web3 import Web3
+    try:
+        c = w3.eth.contract(address=Web3.to_checksum_address(contract), abi=ABI_CHECK)
+        return c.functions.name().call() or ""
+    except Exception:
+        return ""
+
+
 def step2_nfts(w3, victim):
     say("")
     say("── ステップ2：残っている NFT の一覧 ──")
     say("救出できるのは「まだ被害ウォレットに残っている NFT」だけです。")
     say("すでに攻撃者のウォレットへ移された分は、取り戻せません。")
     say("")
-    say("Alchemy の API キーがあれば自動で一覧を作れます（キーは保存しません）。")
-    say("無い場合は、このあと手入力できます。")
-    nfts = []
-    key = getpass.getpass("Alchemy APIキー（無ければそのまま Enter）: ").strip()
-    if key:
-        try:
-            nfts = fetch_nfts_alchemy(victim, key)
-            say(f"取得できました：{len(nfts)} 件")
-        except Exception as e:
-            say(f"自動取得に失敗しました（{str(e)[:60]}）。手入力に切り替えます。")
-            nfts = []
-        del key
-    if not nfts:
+    say("一覧の作り方は2つあります。")
+    say("  1：リストを貼り付ける（キー不要）…ウェブページで作ったリストや、OpenSeaなどで調べたリストを貼ります")
+    say("  2：Alchemy の API キーで自動取得する（キーは保存しません）")
+    mode = ask("どちらの方法にしますか？（1 か 2）: ")
+    rows = []
+    if mode == "2":
+        key = getpass.getpass("Alchemy APIキー: ").strip()
+        if key:
+            try:
+                rows = fetch_nfts_alchemy(victim, key)
+                say(f"取得できました：{len(rows)} 件")
+            except Exception as e:
+                say(f"自動取得に失敗しました（{str(e)[:60]}）。方法1（貼り付け）に切り替えます。")
+                rows = []
+            del key
+        if not rows:
+            say("方法1（貼り付け）に切り替えます。")
+    if not rows:
         say("")
-        say("NFT を1件ずつ入力してください。形式： コントラクトアドレス,TokenID,種類")
+        say("NFT のリストを貼り付けてください。形式： コントラクトアドレス,TokenID,種類")
         say("種類は ERC721 か ERC1155。例： 0x1234...abcd,15,ERC721")
-        say("1件入れるごとに「他にもありますか？」と聞くので、無いときは「いいえ」と答えてください。")
+        say("何行でもまとめて貼って大丈夫です。貼り終わったら「おわり」と入力してください。")
+        seen = set()
         while True:
-            line = ask("NFTを入力: ").strip()
+            line = ask("").strip()
             if line in ("おわり", "終わり"):
                 break
             if not line:
-                say("まだ終わりではありません。NFTを入力するか、終わるときは「おわり」と入力してください。")
                 continue
-            finish = False
-            for suf in ("おわり", "終わり"):
-                if line.endswith(suf):
-                    line = line[: -len(suf)].strip().rstrip(",").strip()
-                    finish = True
-                    break
+            if line.lower().startswith("contract,"):
+                continue
+            parts = [p.strip() for p in line.replace("、", ",").replace("，", ",").split(",")]
             try:
-                c, tid, typ = [p.strip() for p in line.split(",")]
                 from web3 import Web3
-                nfts.append({"contract": Web3.to_checksum_address(c),
-                             "tokenId": int(tid), "type": typ.upper()})
+                c = Web3.to_checksum_address(parts[0])
+                tid = int(parts[1], 0)
+                typ = parts[2].upper() if len(parts) > 2 else ""
+                if typ not in ("ERC721", "ERC1155"):
+                    typ = ""
+                k = (c.lower(), tid)
+                if k in seen:
+                    continue
+                seen.add(k)
+                rows.append({"contract": c, "tokenId": tid, "type": typ})
             except Exception:
-                say("形式が違うようです。もう一度お願いします。")
-                continue
-            say(f"受け付けました（今 {len(nfts)} 件）")
-            if finish:
-                break
-            if not confirm("他にもありますか"):
-                break
-    if not nfts:
+                say(f"形式が違うため読み込めませんでした： {line[:50]}")
+        say(f"読み込めました：{len(rows)} 件")
+    if not rows:
         stop("NFT が0件です。残っている NFT が無い場合、救出するものがありません。")
+    say("")
+    say("チェーンで「今も本人が持っているか」を1件ずつ確かめます…")
+    from collections import OrderedDict
+    from web3 import Web3
+    groups = OrderedDict()
+    for i, r in enumerate(rows, 1):
+        r["contract"] = Web3.to_checksum_address(r["contract"])
+        ok, typ = verify_owned(w3, victim, r)
+        g = groups.setdefault(r["contract"], {"owned": [], "dropped": 0})
+        if ok:
+            r["type"] = typ
+            g["owned"].append(r)
+        else:
+            g["dropped"] += 1
+        if i % 20 == 0:
+            say(f"  …{i} 件確認しました")
+    nfts = []
+    say("")
+    say("契約（コレクション）ごとに確認します。心当たりがある物だけを救出対象にします。")
+    say("知らない契約は「いいえ」のままにしてください（勝手に送られた詐欺NFTの可能性があります）。")
+    for contract, g in groups.items():
+        if not g["owned"]:
+            say(f"・{contract}：今は持っていない物だけでした（{g['dropped']} 件）ので、対象にしません。")
+            continue
+        name = contract_name(w3, contract)
+        label = f"「{name}」" if name else "名前が分からない契約"
+        say(f"・{label}（{contract}）：{len(g['owned'])} 件を持っています。")
+        if g["dropped"]:
+            say(f"　（持っていないため外した物：{g['dropped']} 件）")
+        if confirm("この契約のNFTに心当たりがありますか"):
+            nfts.extend(g["owned"])
+            say(f"　→ 救出対象に入れました（今 {len(nfts)} 件）")
+        else:
+            say("　→ 対象にしませんでした。")
+    if not nfts:
+        stop("救出対象が0件です。心当たりのある NFT が無い場合、救出するものがありません。")
     say("")
     say(f"対象の NFT：{len(nfts)} 件")
     for n in nfts:

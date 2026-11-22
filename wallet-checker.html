@@ -136,6 +136,11 @@ button,select,input{min-height:48px}
 .nft-item b{font-size:14.5px}
 .nft-item .c{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted);word-break:break-all;grid-column:1/-1}
 .nft-item .tag{font-size:11.5px;font-weight:800;background:var(--teal-soft);color:var(--teal);border-radius:999px;padding:3px 9px;height:fit-content}
+.vgroup{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px;font-size:14px}
+.vgroup label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.vgroup input[type=checkbox]{width:20px;height:20px;margin-top:2px;flex:none}
+.vgroup .vc{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted);word-break:break-all}
+.vgroup .vd{color:var(--muted);font-size:13px;margin-top:6px}
 .appr-item{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px;margin-top:10px}
 .appr-item.danger{background:var(--red-soft);border-color:#fecdca}
 .appr-item .who{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted);word-break:break-all;margin-top:4px}
@@ -309,7 +314,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
           <li><span class="n">3</span><div><strong>安全なウォレットに、少額のPOLを入れておく</strong><p>救出作業のガス代（手数料）は安全なウォレットが払います。Polygonなら目安として0.3 POLを用意してください（通常はその半分以下で足ります）。取引所から送るか、別の安全なウォレットから送ってください。<strong class="crit">絶対に、被害ウォレットへは送らないでください</strong>（入れた瞬間に攻撃者の委任で盗まれる恐れがあります）。</p></div></li>
           <li><span class="n">4</span><div><strong>PCに Chrome（またはEdge）と MetaMask を入れる</strong><p>MetaMaskは公式サイト metamask.io からブラウザ拡張機能を入れます。パターンBを使う場合は、被害ウォレットをこのMetaMaskで表示できる状態にしてください。インポートの手順：MetaMaskを開く → アカウントの切り替え →「アカウントを追加」→「秘密鍵をインポート」（表示はバージョンで少し違います）→ 被害ウォレットの秘密鍵を貼る。これはMetaMaskの中だけの操作で、このページに鍵を入力することはありません。パターンAではMetaMaskへのインポートは不要です。</p><p style="margin-top:6px">このページ自体はMetaMaskと接続しません（確認は公開情報の読み取りだけです）。MetaMaskを使うのは、パターンBの操作のときだけです。</p></div></li>
           <li><span class="n">5</span><div><strong>MetaMaskのネットワークを Polygon に切り替えられるようにしておく</strong><p>パターンBの操作は、ネットワーク（Polygon）ごとに行います。MetaMask上部のネットワーク名で「Polygon Mainnet」に切り替えられます。チェーンIDは 137 です。</p></div></li>
-          <li><span class="n">6</span><div><strong>（ステップ2で使う）Alchemyの無料APIキーを取る ※任意ですが推奨</strong><p>NFTを自動で全部リストにするためのキーです。取り方：下のリンクからAlchemyの公式サイトで無料アカウントを作成 → ログイン後に「Apps」→「Create new app」→ Chainは Polygon、Networkは Polygon Mainnet → 作成後に「API Key」を表示してコピー（32文字ほどの英数字です。<strong>https:// で始まる長いURLはキーではない</strong>ので、コピーするのはキーだけにしてください）。キーはステップ2の欄にだけ貼ります（保存されません）。キーが無くても、PolygonScanで手作業でリストを作って進めることはできます。</p><p style="margin-top:8px"><a href="https://dashboard.alchemy.com/signup" target="_blank" rel="noopener noreferrer"><strong>→ Alchemyに無料登録する（公式サイト）</strong></a><br><a href="https://dashboard.alchemy.com" target="_blank" rel="noopener noreferrer">すでにアカウントがある方はこちら（ダッシュボードを開く）</a><span style="display:block;margin-top:4px">※<strong class="crit">開くのは公式ドメイン（dashboard.alchemy.com）だけです。似た名前の別サイトで登録しないでください。</strong>クレジットカードは不要です。</span></p></div></li>
+          <li><span class="n">6</span><div><strong>（ステップ2の方法Bで使う）Alchemyの無料APIキーを取る ※任意（無くても進めます）</strong><p>NFTを自動で全部リストにするためのキーです。取り方：下のリンクからAlchemyの公式サイトで無料アカウントを作成 → ログイン後に「Apps」→「Create new app」→ Chainは Polygon、Networkは Polygon Mainnet → 作成後に「API Key」を表示してコピー（32文字ほどの英数字です。<strong>https:// で始まる長いURLはキーではない</strong>ので、コピーするのはキーだけにしてください）。キーはステップ2の欄にだけ貼ります（保存されません）。キーが無くても大丈夫です。ステップ2の方法A（PolygonScanなどでリストを作って貼り付ける方法）で進められます。</p><p style="margin-top:8px"><a href="https://dashboard.alchemy.com/signup" target="_blank" rel="noopener noreferrer"><strong>→ Alchemyに無料登録する（公式サイト）</strong></a><br><a href="https://dashboard.alchemy.com" target="_blank" rel="noopener noreferrer">すでにアカウントがある方はこちら（ダッシュボードを開く）</a><span style="display:block;margin-top:4px">※<strong class="crit">開くのは公式ドメイン（dashboard.alchemy.com）だけです。似た名前の別サイトで登録しないでください。</strong>クレジットカードは不要です。</span></p></div></li>
           <li><span class="n">7</span><div><strong>時間と心の準備：30〜60分、途中で席を立たない</strong><p>パターンAは、始めたら最後まで一気に進めてください。途中で被害ウォレットで他の取引をすると、手順がずれて失敗します。あわてて知らないサイトの署名に応じるのは厳禁です。</p></div></li>
           <li><span class="n">8</span><div><strong>プライバシーについて（このページが外部と通信するもの）</strong><p>このページは、表示のために外部の配信サーバー（jsDelivr）からプログラム部品（ethers.js）を、Google Fontsからフォントを読み込みます。その際、あなたのIPアドレスがそれらの運営者に伝わります。それ以外で、このページが入力内容を保存したり、作者のサーバーへ送ったりすることはありません。確認のために入力したアドレスは、チェーンの公開窓口（RPC）と、NFT取得のときだけAlchemyに送られます。</p></div></li>
         </ul>
@@ -390,32 +395,39 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
       <!-- STEP 2 NFT -->
       <section class="card" id="step2">
         <h2><span class="num">2</span>NFTを全部リストにする（見るだけ・安全）</h2>
-        <p class="sub">回収するには「どのNFTが、まだ被害ウォレットに残っているか」の完全なリストが必要です。ここで作るリストは記録用です（CSVで保存できます）。パターンAの専用キットでも、同じように一覧を作ってから回収します。</p>
+        <p class="sub">回収するには「どのNFTが、まだ被害ウォレットに残っているか」の完全なリストが必要です。作り方は2つあります（方法A・方法B）。どちらも読み取りだけで安全です。作ったリストはCSVで保存でき、パターンAの専用キットにそのまま貼って使えます。</p>
         <div class="why"><h4>なぜやるか／押すと何が起きるか</h4>
         <p><strong>なぜ：</strong>回収は「リストにあるNFT」しか移せません。漏れがあると、そのNFTだけ取り残されます。逆に、すでに盗まれたNFTはリストに出てきません（それは戻せない分です）。</p>
-        <p><strong>「NFTを取得する」を押すと：</strong>Alchemyという索引サービスに「このアドレスが持つNFT」を問い合わせ、一覧を表示します。読み取りだけです。APIキーはこのページに保存されず、Alchemyへの問い合わせにだけ使います。</p>
-        <p><strong>APIキーが無い場合：</strong>下の「手作業でリストを作る方法」を開いて、PolygonScanから1件ずつ追加することもできます。件数が少ない人（数件程度）は手作業でも大丈夫です。</p></div>
+        <p><strong>方法A（キー不要）：</strong>自分のNFTのリストを貼り付けると、このページがチェーンに問い合わせて「本当に今も持っているか」を1件ずつ確かめます。持っていない物は自動で外れます。そのあと、契約（コレクション）ごとに「心当たりがある物」だけを選んでリストに入れます。</p>
+        <p><strong>方法B（APIキーを使う）：</strong>Alchemyという索引サービスに「このアドレスが持つNFT」を問い合わせ、一覧を表示します。読み取りだけです。APIキーはこのページに保存されず、Alchemyへの問い合わせにだけ使います。</p></div>
 
+        <h3>方法A：リストを貼り付けて照合する（キー不要）</h3>
+        <p class="hint">OpenSeaやPolygonScanで自分のNFTを確認し、「コントラクトアドレス,TokenID,種類」の形で、1行に1件ずつ貼ってください（種類は ERC721 または ERC1155）。分からない場合は、下の「リストの作り方（OpenSea／PolygonScanで確認する方法）」を開いてください。</p>
+        <label class="label" for="manualNfts">NFTリスト（1行に1件）</label>
+        <textarea class="txtin mono" id="manualNfts" rows="6" spellcheck="false" placeholder="0xコントラクトアドレス,123,ERC721"></textarea>
+        <div style="margin-top:10px"><button class="btn btn-primary" id="manualBtn" type="button">照合してリストに入れる</button></div>
+        <div class="status-line" id="verifyStatus"><span class="dot"></span><span>まだ照合していません。ステップ1で確認したアドレスが対象になります。</span></div>
+        <div id="verifyBox"></div>
+        <details class="faqd">
+          <summary>リストの作り方（OpenSea／PolygonScanで確認する方法）</summary>
+          <p>① OpenSeaでそのNFTのページを開き、「詳細（Details）」を見ると、コントラクトアドレスとToken IDが分かります。② PolygonScanでは、ステップ1の確認結果に出る「エクスプローラーで開く」から被害ウォレットを開き、保有トークン一覧や「Token Transfers」で確認できます。③ 分かった分を、上の欄に1行に1件ずつ書いてください。持っていない物が混ざっていても大丈夫です（照合で自動的に外れます）。</p>
+        </details>
+
+        <h3>方法B：Alchemyキーで自動取得する（使いたい人向け）</h3>
+        <p class="hint">自分が何のNFTを持っているか全く分からない場合は、こちらが便利です。キーを持っていない人は、方法Aで進めてください。</p>
         <label class="label" for="alchemyKey">Alchemy APIキー（ステップ0の手順6で取得）</label>
         <input class="txtin" id="alchemyKey" type="password" autocomplete="off" spellcheck="false" placeholder="AlchemyのAPIキーを貼り付け（保存されません）">
         <p class="hint"><strong><strong class="crit">ここに秘密鍵やシードフレーズは絶対に入れないでください。</strong></strong>入れるのはAlchemyのキーだけです。まだキーがない場合は、<a href="https://dashboard.alchemy.com/signup" target="_blank" rel="noopener noreferrer">Alchemy公式サイトで無料取得</a>できます（登録後に「Apps」→「Create new app」、Chainは Polygon、Networkは Polygon Mainnet）。登録画面は英語の場合があります（ブラウザの設定によっては日本語で表示されます）。キーは、ログイン後の「Apps」で作ったアプリを開き、「API Key」の表示で出てくる、32文字ほどの英数字です。<strong>https:// で始まる長いURLはキーではありません</strong>ので、貼らないでください。すでにアカウントがある方は<a href="https://dashboard.alchemy.com" target="_blank" rel="noopener noreferrer">ダッシュボード</a>からキーを確認できます。詳しい手順はステップ0の手順6にあります。</p>
         <p class="hint">これはウォレットの秘密鍵ではありません。Alchemyという情報サービスの鍵です。それでも他人には見せないでください。入力はこのページを開いている間だけメモリに置かれ、閉じれば消えます。</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
           <button class="btn btn-primary" id="nftBtn" type="button"><span class="spin" id="nftSpin"></span><span id="nftLabel">NFTを取得する →</span></button>
-          <button class="btn btn-ghost" id="csvBtn" type="button" disabled>NFTリストをCSVで保存</button>
         </div>
         <div class="error" id="nftErr"></div>
         <div class="okbox" id="nftOk"></div>
         <div class="status-line" id="nftSummary"><span class="dot"></span><span>まだ取得していません。ステップ1で確認したアドレスが対象になります（アドレス欄の内容を使います）。</span></div>
         <div class="nft-list" id="nftList"></div>
 
-        <details class="faqd">
-          <summary>APIキーが無い／使いたくない場合：手作業でリストを作る方法</summary>
-          <p>① ステップ1の確認結果に出る「エクスプローラーで開く」からPolygonScanを開きます。②「Token Transfers」や保有トークン一覧で、被害ウォレットが持つNFTの「コントラクトアドレス」と「Token ID」を確認します。③ 下の欄に、1行につき「コントラクトアドレス,TokenID,ERC721」の形で貼り付けて「リストに反映する」を押してください（ERC-1155の場合は末尾を ERC1155 に）。コントラクトアドレス・TokenID・種類（ERC721／ERC1155）は、OpenSeaでそのNFTのページを開き、「詳細（Details）」を見ると分かります。NFTが多い場合や分からない場合は、Alchemyキーでの自動取得がおすすめです。この内容は、このページでの記録用です。パターンAのキットでは、キットの中でもう一度一覧を作ります（Alchemyキーがあれば自動です）。</p>
-          <label class="label" for="manualNfts">手作業リスト（1行に1件）</label>
-          <textarea class="txtin mono" id="manualNfts" rows="4" spellcheck="false" placeholder="0xコントラクトアドレス,123,ERC721"></textarea>
-          <div style="margin-top:10px"><button class="btn btn-ghost btn-sm" id="manualBtn" type="button">リストに反映する</button></div>
-        </details>
+        <div style="margin-top:14px"><button class="btn btn-ghost" id="csvBtn" type="button" disabled>NFTリストをCSVで保存</button></div>
 
         <details class="faqd">
           <summary>目で確認したい場合：エクスプローラー／OpenSeaへのリンク</summary>
@@ -504,7 +516,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
       <!-- FAQ -->
       <section class="card faq">
         <h2>よくある疑問（困ったらまずここ）</h2>
-        <details open><summary>結局、必要なものはこのファイルだけですか？</summary><p>確認（ステップ1）とNFTリスト（ステップ2）と、進み方の選択（ステップ3）はこのページで行います。実行は、パターンAなら専用キット（ZIP、ステップ3からダウンロード）、パターンBならMetaMaskの中の操作です。他に必要なのは、安全なウォレット、少額のPOL、（推奨）Alchemyの無料キーだけです。</p></details>
+        <details open><summary>結局、必要なものはこのファイルだけですか？</summary><p>確認（ステップ1）とNFTリスト（ステップ2）と、進み方の選択（ステップ3）はこのページで行います。実行は、パターンAなら専用キット（ZIP、ステップ3からダウンロード）、パターンBならMetaMaskの中の操作です。他に必要なのは、安全なウォレット、少額のPOLだけです（Alchemyの無料キーは、ステップ2の方法Bを使う人だけ）。</p></details>
         <details><summary>他の人も使えますか？</summary><p>使えます。このページのアドレス（URL）を教えるだけです。条件は「本人がまだ秘密鍵／シードフレーズを知っていること」「署名は本人が自分のPCの中でやること」「救出先ウォレットと少額のガス代があること」です。特定の人のアドレスは最初から入っていないので、誰が開いても空の状態で始まります。ただし救出できるのは、その人のウォレットにまだ残っている分だけです。</p></details>
         <details><summary>盗まれた後でも、救出できますか？</summary><p>本人が鍵をまだ知っている限り、「まだウォレットに残っている資産」は救出できます（パターンAの方式は、実際のPolygonチェーンで検証済み）。ただし、すでに攻撃者に送り出された資産自体は戻せません。転売されて第三者に渡ったNFTも戻せません。鍵もシードも失った場合は救出できません。</p></details>
         <details><summary>秘密鍵を入れる画面はありますか？</summary><p>このページにはありません。パターンAの専用キットでは、あなたのパソコンの中の入力欄（打っても文字が見えない欄）でだけ秘密鍵を使います。それ以外の場所（Webサイト・チャット・メール）で秘密鍵を入力させる画面が出たら、それはこのキットではありません。すぐに閉じてください。</p></details>
@@ -585,6 +597,17 @@ function download(name, text, type){
   var a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click();
   setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
 }
+function decodeAbiString(hex){
+  if(!hex || hex==='0x') return '';
+  var h=hex.replace(/^0x/,'');
+  if(h.length<128) return '';
+  var len=parseInt(h.substr(64,64),16);
+  if(!len || len>200) return '';
+  var arr=new Uint8Array(len);
+  for(var i=0;i<len;i++){ arr[i]=parseInt(h.substr(128+i*2,2),16); }
+  try{ return new TextDecoder().decode(arr); }catch(e){ return ''; }
+}
+function pad256(hex){ hex=String(hex).replace(/^0x/,''); while(hex.length<64) hex='0'+hex; return hex; }
 function nftContracts(){
   var seen={}, out=[];
   W.nfts.forEach(function(n){ var c=n.contract.toLowerCase(); if(!seen[c]){ seen[c]=1; out.push(n.contract); } });
@@ -853,7 +876,7 @@ $('nftBtn').addEventListener('click', function(){
   var key = $('alchemyKey').value.trim();
   if(!/^0x[0-9a-fA-F]{40}$/.test(addr)){ showErr('nftErr','先にステップ1で被害ウォレットのアドレスを入力してください。'); return; }
   if(current!=='polygon'){ showErr('nftErr','NFT取得はPolygonのみ対応です。チェーンをPolygonにしてください。'); return; }
-  if(!key){ var ne=$('nftErr'); ne.className='status warn'; ne.textContent='キーが無い人は、このボタンは押さなくて大丈夫です。下の「手作業でリストを作る方法」から進んでください。'; ne.style.display='block'; return; }
+  if(!key){ var ne=$('nftErr'); ne.className='status warn'; ne.textContent='キーが無い人は、このボタンは押さなくて大丈夫です。上の「方法A：リストを貼り付けて照合する」から進んでください。'; ne.style.display='block'; return; }
   if(/^https?:\/\//i.test(key)){ showErr('nftErr','URLが貼られています。貼るのは「キー」だけです。URLの最後の「/」の後ろにある文字列だけをコピーして貼ってください。'); return; }
   var btn=$('nftBtn'); btn.disabled=true; $('nftSpin').style.display='block'; $('nftLabel').textContent='取得中…';
   var rows=[], pageKey=null, base='https://polygon-mainnet.g.alchemy.com/nft/v3/'+encodeURIComponent(key)+'/getNFTsForOwner';
@@ -874,18 +897,105 @@ $('nftBtn').addEventListener('click', function(){
     showErr('nftErr','NFTを取得できませんでした。APIキーが正しいか、アプリのチェーンがPolygon Mainnetになっているか確認してください。');
   }).finally(function(){ btn.disabled=false; $('nftSpin').style.display='none'; $('nftLabel').textContent='NFTを取得する →'; });
 });
+var verifyGroups = [];
+function rebuildFromVerify(){
+  W.nfts = [];
+  verifyGroups.forEach(function(g){ if(g.checked){ W.nfts = W.nfts.concat(g.owned); } });
+  renderNfts();
+  if(W.nfts.length===0){
+    $('nftOk').style.display='none';
+    setStatus('nftSummary','まだリストは空です。方法Aでは、心当たりがある契約にチェックを入れるとリストに入ります。','warn');
+  }
+}
+function renderVerify(){
+  var box=$('verifyBox'); box.innerHTML='';
+  if(verifyGroups.length===0) return;
+  var head=document.createElement('p'); head.className='hint';
+  head.innerHTML='<strong>照合が終わりました。</strong>下の契約（コレクション）の中から、<strong>心当たりがある物だけ</strong>にチェックを入れてください。<strong class="crit">知らない契約はチェックしないでください</strong>（勝手に送られた詐欺NFTの可能性があります）。';
+  box.appendChild(head);
+  verifyGroups.forEach(function(g, gi){
+    var d=document.createElement('div'); d.className='vgroup';
+    d.innerHTML='<label><input type="checkbox"><span><b></b><br><span class="vc"></span></span></label><div class="vd"></div>';
+    d.querySelector('b').textContent=(g.name||'（名前が分からない契約）')+'：'+g.owned.length+' 件（本人の保有を確認済み）';
+    d.querySelector('.vc').textContent='コントラクト: '+g.contract;
+    var msgs=[];
+    if(g.dropped>0) msgs.push('持っていないため外した物：'+g.dropped+' 件');
+    if(g.owned.length===0) msgs.push('この契約のNFTは、今は持っていません。');
+    d.querySelector('.vd').textContent=msgs.join('　');
+    var cb=d.querySelector('input');
+    cb.checked=g.checked; cb.disabled=(g.owned.length===0);
+    cb.addEventListener('change', function(){ g.checked=cb.checked; rebuildFromVerify(); });
+    box.appendChild(d);
+  });
+}
 $('manualBtn').addEventListener('click', function(){
   hideErr('nftErr');
-  var lines=$('manualNfts').value.split('\n'), rows=[], bad=0;
+  var addr = $('addr').value.trim();
+  if(!/^0x[0-9a-fA-F]{40}$/.test(addr)){ showErr('nftErr','先にステップ1で被害ウォレットのアドレスを入力してください。'); return; }
+  if(current!=='polygon'){ showErr('nftErr','照合はPolygonのみ対応です。チェーンをPolygonにしてください。'); return; }
+  var lines=$('manualNfts').value.split('\n'), rows=[], bad=0, seen={};
   lines.forEach(function(line){
     line=line.trim(); if(!line) return;
-    var p=line.split(',').map(function(x){return x.trim();});
-    if(p.length>=2 && /^0x[0-9a-fA-F]{40}$/.test(p[0])){ rows.push({contract:p[0], tokenId:p[1], type:(p[2]||'ERC721').toUpperCase(), name:''}); } else { bad++; }
+    if(/^contract\s*,/i.test(line)) return;
+    var p=line.split(/[,、，]/).map(function(x){return x.trim();});
+    if(p.length>=2 && /^0x[0-9a-fA-F]{40}$/.test(p[0]) && /^(0x[0-9a-fA-F]+|[0-9]+)$/.test(p[1])){
+      var k=p[0].toLowerCase()+'|'+p[1].toLowerCase();
+      if(seen[k]) return; seen[k]=1;
+      var t=(p[2]||'').toUpperCase();
+      rows.push({contract:p[0], tokenId:p[1], type:(t==='ERC1155'?'ERC1155':(t==='ERC721'?'ERC721':'')), name:''});
+    } else { bad++; }
   });
-  if(rows.length===0 && bad===0){ W.nfts=[]; renderNfts(); setStatus('nftSummary','<strong>NFTは0件です。</strong>入力が空でした。残っているNFTが本当に無い場合は、救出できるNFTはありません。委任だけ外したい人は、ステップ3のパターンBを見てください。','warn'); return; }
-  if(rows.length===0){ showErr('nftErr','正しい形式の行がありませんでした。「0xアドレス,TokenID,ERC721」の形で入力してください。'); return; }
-  W.nfts = rows; renderNfts();
-  if(bad>0){ showErr('nftErr', bad+' 行は形式が違うため読み込めませんでした。読み込めたのは '+rows.length+' 件です。'); }
+  if(rows.length===0){
+    if(bad===0){ verifyGroups=[]; renderVerify(); W.nfts=[]; renderNfts(); setStatus('verifyStatus','<strong>入力が空でした。</strong>リストを貼ってから押してください。本当にNFTが残っていない場合は、救出できるNFTはありません。委任だけ外したい人は、ステップ3のパターンBを見てください。','warn'); }
+    else { showErr('nftErr','正しい形式の行がありませんでした。「0xアドレス,TokenID,ERC721」の形で入力してください。'); }
+    return;
+  }
+  if(rows.length>600){ showErr('nftErr','件数が多すぎます（上限600件）。分けて照合してください。'); return; }
+  var btn=$('manualBtn'); btn.disabled=true;
+  setStatus('verifyStatus','照合中です… 0 / '+rows.length+' 件','');
+  var done=0, results=new Array(rows.length);
+  function callEth(to, data){ return rpcCall(LOG_RPCS,'eth_call',[{to:to,data:data},'latest']); }
+  function checkOne(row){
+    var idHex;
+    try{ idHex=pad256(BigInt(row.tokenId).toString(16)); }catch(e){ return Promise.resolve({row:row, owned:false, type:row.type||'ERC721'}); }
+    var ownerData='0x6352211e'+idHex;
+    var balData='0x00fdd58e'+pad256(addr.toLowerCase())+idHex;
+    function as721(){ return callEth(row.contract, ownerData).then(function(r){ return !!r && r!=='0x' && ('0x'+r.slice(-40)).toLowerCase()===addr.toLowerCase(); }).catch(function(){ return false; }); }
+    function as1155(){ return callEth(row.contract, balData).then(function(r){ if(!r || r==='0x') return false; try{ return BigInt(r)>0n; }catch(e){ return false; } }).catch(function(){ return false; }); }
+    var seq;
+    if(row.type==='ERC1155'){ seq=as1155().then(function(ok){ return {t:'ERC1155', ok:ok}; }); }
+    else if(row.type==='ERC721'){ seq=as721().then(function(ok){ return {t:'ERC721', ok:ok}; }); }
+    else { seq=as721().then(function(ok){ if(ok) return {t:'ERC721', ok:true}; return as1155().then(function(ok2){ return {t:(ok2?'ERC1155':'ERC721'), ok:ok2}; }); }); }
+    return seq.then(function(res){ return {row:row, owned:res.ok, type:res.t}; });
+  }
+  var idx=0;
+  function worker(){
+    if(idx>=rows.length) return Promise.resolve();
+    var i=idx++;
+    return checkOne(rows[i]).then(function(r){ results[i]=r; done++; if(done%10===0||done===rows.length){ setStatus('verifyStatus','照合中です… '+done+' / '+rows.length+' 件',''); } return worker(); });
+  }
+  var workers=[]; for(var k=0;k<6;k++){ workers.push(worker()); }
+  Promise.all(workers).then(function(){
+    var order=[], map={};
+    results.forEach(function(r){
+      var c=r.row.contract.toLowerCase();
+      if(!map[c]){ map[c]={contract:r.row.contract, name:'', owned:[], dropped:0, checked:false}; order.push(map[c]); }
+      if(r.owned){ r.row.type=r.type; map[c].owned.push(r.row); } else { map[c].dropped++; }
+    });
+    verifyGroups=order;
+    return Promise.all(order.map(function(g){
+      return callEth(g.contract,'0x06fdde03').then(function(r){ g.name=decodeAbiString(r); }).catch(function(){});
+    }));
+  }).then(function(){
+    btn.disabled=false;
+    renderVerify();
+    rebuildFromVerify();
+    var ownedTotal=verifyGroups.reduce(function(a,g){ return a+g.owned.length; },0);
+    setStatus('verifyStatus','<strong>照合が終わりました。</strong>'+rows.length+' 件を調べ、<strong>'+ownedTotal+' 件</strong>が「今も本人が持っている」物でした。'+(bad>0?(' 形式が違って読み込めなかった行：'+bad+' 行。'):''),'on');
+  }).catch(function(){
+    btn.disabled=false;
+    showErr('nftErr','照合できませんでした。通信の状態を確認して、もう一度押してください。');
+  });
 });
 $('csvBtn').addEventListener('click', function(){
   var csv='contract,tokenId,type,name\n'+W.nfts.map(function(n){ return n.contract+','+n.tokenId+','+n.type+',"'+String(n.name||'').replace(/"/g,'""')+'"'; }).join('\n');
@@ -1039,10 +1149,11 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
     {sec:'step1', el:'#runBtn', text:'「確認する →」を押して。結果で、進み方が分かれます'},
     {sec:'step15', el:'#apprBtn', key:'ap1', text:'許可の棚卸し：「許可を調べる →」を押して（少し時間がかかります）。終わったら「次へ →」を押して。飛ばしても大丈夫です'},
     {sec:'step3', el:'#choiceQ', key:'q', text:'質問に答えて（ボタンを1つ押して）。答えたら「次へ →」を押して。あなた向きの進み方に進みます'},
-    {sec:'step2', el:'#alchemyKey', key:'n1', text:'AlchemyのAPIキーを貼り付けて（NFTが多い人は必須です。無い人は、そのまま次へ）'},
-    {sec:'step2', el:'#nftBtn', text:'APIキーを入れた人だけ「NFTを取得する →」を押して（無い人は押さずに次へ）'},
-    {sec:'step2', el:'#manualNfts', text:'キーが無い人：下の欄に「コントラクトアドレス,TokenID,ERC721」の形で、1行に1件ずつ書いて（無い人は空のまま次へ）'},
-    {sec:'step2', el:'#manualBtn', key:'n4', text:'キーが無い人：「リストに反映する」を押して（空の人も押してOKです。0件の案内が出ます）'},
+    {sec:'step2', el:'#manualNfts', key:'n1', text:'方法A（キー不要）：NFTのリストを貼り付けて（「コントラクトアドレス,TokenID,ERC721」の形で1行に1件。方法Bを使う人は空のまま次へ）'},
+    {sec:'step2', el:'#manualBtn', text:'方法Aの人：「照合してリストに入れる」を押して（少し時間がかかります）'},
+    {sec:'step2', el:'#verifyBox', key:'n4', text:'方法Aの人：契約の名前を見て、心当たりがある物だけチェックして。知らない物はチェックしないで（無ければ、そのまま次へ）'},
+    {sec:'step2', el:'#alchemyKey', text:'方法B（使いたい人だけ）：AlchemyのAPIキーを貼り付けて（無い人は、そのまま次へ）'},
+    {sec:'step2', el:'#nftBtn', text:'方法Bの人だけ「NFTを取得する →」を押して（方法Aの人は押さずに次へ）'},
     {sec:'step3', el:'#dlKitBtn', key:'a1', text:'パターンA：まず「専用キット（ZIP）をダウンロード」を押して'},
     {sec:'step3', el:'#patternA', key:'a2', text:'ダウンロードしたZIPを右クリック→「すべて展開」で解凍して、中の READ_FIRST.txt（まず読んでください）を開いて読んで'},
     {sec:'step3', el:'#patternA', key:'a3', text:'START.bat をダブルクリック（青い画面が出たら「詳細情報」→「実行」）。ここからはキットの黒い画面が1つずつ聞いてくるので、答えていってください。キットが終わったら、このページに戻って「次へ →」を押して'},
