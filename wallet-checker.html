@@ -230,7 +230,8 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
   <section class="card" id="readOnlyIntro">
     <h2>まず、公開アドレスで確認する</h2>
     <p>ウォレットを接続せず、送金も署名もせずに確認できます。秘密鍵・復元フレーズは入力しないでください。選んだチェーンの公開窓口へ確認用のアドレスが送られます。</p>
-    <p id="readOnlyBoundary" role="status">スマホ・タブレットでは確認までです。実行の案内は、ご自身のWindows PCでこの配布ページを開き直してください。</p>
+    <p>スマートフォンやMacでも公開アドレスの確認はできます。専用キットを実行できるのはWindowsパソコンだけです。Mac版は準備中です。</p>
+    <p id="readOnlyBoundary" role="status">実行する場合は、ご自身のWindowsパソコンでこの配布ページを開き直してください。</p>
     <button type="button" class="btn btn-ghost" id="desktopGuide" hidden>Windows PC用の案内を開く</button>
     <noscript><p>公開情報を確認するにはJavaScriptが必要です。</p></noscript>
   </section>
@@ -1452,6 +1453,13 @@ function createWindowsGuide(){
     // Touch alone is not conclusive. Keep requiring the primary input to hover and be precise.
     return !!inputQuery && inputQuery.matches === true;
   }
+  // For wording only; this must never grant Windows access.
+  function isConfidentMac(){
+    const n=window.navigator || {}, hints=n.userAgentData, ua=n.userAgent || '';
+    return !!hints && hints.platform==='macOS' && hints.mobile===false &&
+      /^Mac/i.test(n.platform || '') && /Macintosh/i.test(ua) &&
+      !/Android|iPhone|iPad|iPod|Mobile|Windows/i.test(ua) && (n.maxTouchPoints || 0)<2;
+  }
   function renderBoundary(){
     if (desktop && !isConfirmedWindows()) desktop=false;
     const selected=d.querySelector('.chain[aria-pressed="true"]');
@@ -1476,7 +1484,8 @@ function createWindowsGuide(){
     boundary.textContent=desktop ? 'Windows PC用の案内を表示中です。先に公開情報を確認してください。'
       : (polygon ? 'ここでは、公開情報とPolygonの許可・NFT一覧まで確認できます。'
         : 'このチェーンでできるのは最初の確認までです。許可の棚卸し・NFT一覧はPolygonのみ対応です。')
-        + ' 実行の案内は、ご自身のWindows PCでこの配布ページを開き直してください。';
+        + (isConfidentMac() ? ' このMacでは確認までです。' : '')
+        + ' 専用キットを実行できるのはWindowsパソコンだけです。Mac版は準備中です。ご自身のWindowsパソコンでこの配布ページを開き直してください。';
   }
   btn.addEventListener('click', ()=>{
     if (!isConfirmedWindows()) return;
