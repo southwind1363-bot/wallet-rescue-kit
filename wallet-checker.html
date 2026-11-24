@@ -193,6 +193,10 @@ body.showall .stepsec{display:block}
 .gd-btns{display:flex;gap:10px}
 .gd-btns .btn{flex:1}
 body.guide{padding-bottom:170px}
+[hidden]{display:none!important}
+body:not(.v8-desktop) .stepsec:not([hidden]){display:block}
+body:not(.v8-desktop) .gd-head,body:not(.v8-desktop) .gd-bar{display:none!important}
+body.guide:not(.v8-desktop){padding-bottom:0}
 body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{display:none}
 .gd-hl{outline:3px solid var(--amber);outline-offset:3px;border-radius:8px}
 .side .prog a.gd-cur{color:var(--teal);font-weight:800}
@@ -212,7 +216,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
         <span class="badge"><i></i> 誰でも使えます</span>
       </div>
     </div>
-    <aside class="hero-card">
+    <aside class="hero-card" data-desktop-only hidden inert>
       <h3>📖 このページの使い方（最初に読んでください）</h3>
       <ol>
         <li>あわてないでください。<strong>上から順番に</strong>進めれば大丈夫です。途中のステップを飛ばさないでください</li>
@@ -223,10 +227,17 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
     </aside>
   </section>
 
+  <section class="card" id="readOnlyIntro">
+    <h2>まず、公開アドレスで確認する</h2>
+    <p>ウォレットを接続せず、送金も署名もせずに確認できます。秘密鍵・復元フレーズは入力しないでください。選んだチェーンの公開窓口へ確認用のアドレスが送られます。</p>
+    <p id="readOnlyBoundary" role="status">スマホ・タブレットでは確認までです。実行の案内は、ご自身のWindows PCでこの配布ページを開き直してください。</p>
+    <button type="button" class="btn btn-ghost" id="desktopGuide" hidden>Windows PC用の案内を開く</button>
+    <noscript><p>公開情報を確認するにはJavaScriptが必要です。</p></noscript>
+  </section>
   <div class="layout">
     <main>
       <!-- SCOPE: what can / cannot be rescued -->
-      <section class="card">
+      <section class="card" data-desktop-only hidden inert>
         <h2>最初に確認：救出できる分／戻せない分</h2>
         <p class="sub">このキットは「盗まれたものを何でも取り戻す」ものではありません。できることと、原理的にできないことを、始める前に分けておきます。</p>
         <div class="scope">
@@ -251,7 +262,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
       </section>
 
       <!-- OVERVIEW -->
-      <section class="card">
+      <section class="card" data-desktop-only hidden inert>
         <h2>全体の流れ（まず地図を見てください）</h2>
         <p class="sub">救出は全部で5つのステップです。前半（0〜2）は「調べるだけ」で安全です。ステップ3で進み方を選び、ステップ4が最終確認です。各ステップの最後に「完了の目印」を書いてあるので、それが見えたら次へ進んでください。</p>
         <div class="flow">
@@ -274,7 +285,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
       </section>
 
       <!-- GLOSSARY -->
-      <section class="card">
+      <section class="card" data-desktop-only hidden inert>
         <h2>言葉の説明（先に読まなくてOK。出てきたら戻ってきてください）</h2>
         <p class="sub">専門用語を、日常の言葉に言い換えたものです。本文中でも同じ言い換えを使っています。</p>
         <div class="gloss">
@@ -295,7 +306,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
 
       <!-- STEP 0 PREP -->
       
-      <section class="card" id="intro">
+      <section class="card" id="intro" data-desktop-only hidden inert>
         <h2>はじめに：このページでやること</h2>
         <p>やられたウォレットの中に<strong>まだ残っているNFT</strong>を、安全な新しいウォレットへ移すためのページです。すでに持ち出された分は、取り戻せません。</p>
         <p><strong>やり方は2つあります：</strong></p>
@@ -306,7 +317,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
         <p>秘密鍵（ウォレットの鍵）を誰かに教えた・怪しいサイトに入力した心当たりがある人は、パターンAです。心当たりがない人は、まずパターンB、ダメならパターンAです。ステップ1の確認結果と、途中の質問で、あなた向きの方法を案内します。</p>
         <p><strong>このページに、秘密鍵の入力欄はありません。</strong>入力した内容が作者のサーバーに送られることもありません（アドレスを確認するために、チェーンの公開窓口と、NFT取得のときだけAlchemyに送られます）。</p>
       </section>
-      <section class="card" id="step0">
+      <section class="card" id="step0" data-desktop-only hidden inert>
         <h2><span class="num">0</span>準備 — 始める前にそろえるもの</h2>
         <p class="sub">ここが一番大事です。途中で「あれがない」と止まると、署名のNonceがズレたり、攻撃者に先を越されたりします。全部そろってからステップ1へ進んでください。これは確認リストです（チェックを保存する仕組みはありません。目で確認してください）。</p>
         <ul class="prep">
@@ -414,15 +425,17 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
           <p>① OpenSeaでそのNFTのページを開き、「詳細（Details）」を見ると、コントラクトアドレスとToken IDが分かります。② PolygonScanでは、ステップ1の確認結果に出る「エクスプローラーで開く」から被害ウォレットを開き、保有トークン一覧や「Token Transfers」で確認できます。③ 分かった分を、上の欄に1行に1件ずつ書いてください。持っていない物が混ざっていても大丈夫です（照合で自動的に外れます）。</p>
         </details>
 
-        <h3>方法B：Alchemyキーで自動取得する（使いたい人向け）</h3>
+        <details id="alchemyAdvanced" class="faqd">
+        <summary>任意：AlchemyでNFT一覧を取得する</summary>
         <p class="hint">自分が何のNFTを持っているか全く分からない場合は、こちらが便利です。キーを持っていない人は、方法Aで進めてください。</p>
         <label class="label" for="alchemyKey">Alchemy APIキー（ステップ0の手順6で取得）</label>
         <input class="txtin" id="alchemyKey" type="password" autocomplete="off" spellcheck="false" placeholder="AlchemyのAPIキーを貼り付け（保存されません）">
         <p class="hint"><strong><strong class="crit">ここに秘密鍵やシードフレーズは絶対に入れないでください。</strong></strong>入れるのはAlchemyのキーだけです。まだキーがない場合は、<a href="https://dashboard.alchemy.com/signup" target="_blank" rel="noopener noreferrer">Alchemy公式サイトで無料取得</a>できます（登録後に「Apps」→「Create new app」、Chainは Polygon、Networkは Polygon Mainnet）。登録画面は英語の場合があります（ブラウザの設定によっては日本語で表示されます）。キーは、ログイン後の「Apps」で作ったアプリを開き、「API Key」の表示で出てくる、32文字ほどの英数字です。<strong>https:// で始まる長いURLはキーではありません</strong>ので、貼らないでください。すでにアカウントがある方は<a href="https://dashboard.alchemy.com" target="_blank" rel="noopener noreferrer">ダッシュボード</a>からキーを確認できます。詳しい手順はステップ0の手順6にあります。</p>
-        <p class="hint">これはウォレットの秘密鍵ではありません。Alchemyという情報サービスの鍵です。それでも他人には見せないでください。入力はこのページを開いている間だけメモリに置かれ、閉じれば消えます。</p>
+        <p class="v8-inline-help">これはウォレットの秘密鍵ではありません。Alchemyという情報サービスの鍵です。それでも他人には見せないでください。入力はこのページを開いている間だけメモリに置かれ、閉じれば消えます。</p>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
           <button class="btn btn-primary" id="nftBtn" type="button"><span class="spin" id="nftSpin"></span><span id="nftLabel">NFTを取得する →</span></button>
         </div>
+        </details>
         <div class="error" id="nftErr"></div>
         <div class="okbox" id="nftOk"></div>
         <div class="status-line" id="nftSummary"><span class="dot"></span><span>まだ取得していません。ステップ1で確認したアドレスが対象になります（アドレス欄の内容を使います）。</span></div>
@@ -443,7 +456,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
       </section>
 
       <!-- STEP 3 CHOOSE -->
-      <section class="card" id="step3">
+      <section class="card" id="step3" data-desktop-only hidden inert>
         <h2><span class="num">3</span>進み方を選ぶ — パターンA／パターンB</h2>
         <p class="sub">救出の実行方法は2つあります。まず質問に答えて、自分の状況に合う方を選んでください。迷ったらパターンAです。</p>
 
@@ -458,7 +471,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
         </div>
 
         <div id="patternA" style="margin-top:18px">
-          <h3>パターンA：専用キット（ZIP）で救出する — 安全・確実</h3>
+          <h3>パターンA：専用キット（ZIP）で救出する</h3>
           <p><strong>向いている人：</strong>鍵漏れの心当たりがある／わからない人。知らない委任先が付いている人。残っているNFTを新しいウォレットへ移したい人。</p>
           <p><strong>仕組み：</strong>安全な新しいウォレットが手数料を全部払い、やられたウォレットにはお金を送りません。だから犯人の自動プログラムと取り合いになりません。署名は、あなたのパソコンの中（専用キット）でだけ作ります。</p>
           <p><strong>なぜ専用キットが必要か：</strong>委任の付け替えに必要な署名は、ブラウザのMetaMaskでは作れない仕様になっています（MetaMaskがその機能を提供していないため）。だから署名だけは、パソコンで動く専用キットの中で行います。</p>
@@ -467,14 +480,16 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
             <li><strong>ZIPを解凍して、中の「まず読んでください」を読む</strong><span class="mm">ファイル名は READ_FIRST.txt です。準備するもの（新しいウォレット・POL 0.3ほど・今のウォレットの秘密鍵）が書いてあります。</span></li>
             <li><strong>START.bat をダブルクリックして、画面の質問に1つずつ答える</strong><span class="mm">秘密鍵は、あなたのパソコンの入力欄（打っても見えない欄）でだけ使います。誰にも送りません。</span></li>
           </ol>
+          <p>Windows PCでは、この公式配布ページを開き直し、照合値を確認してください。<strong>作業を始める前に、最新版のZIPをダウンロードし直してください。以前保存したZIPや展開済みの古いフォルダは使わないでください。</strong> 実行を中断した場合は、前回の作業記録と結果を上書き・削除せず、別の場所に控えてから状況を確認してください。旧版の記録と新版の互換性は確認せずに引き継がないでください。</p>
+          <p class="status-line" id="v8ZipPending">この下書きではZIPをダウンロードできません。</p>
+          <p class="note-box" id="zipVerification">ダウンロードしたZIPの確認用 SHA-256：<span class="mono" id="zipSha256">2913df9876567c658bf535fbbdc3a6abbaec91c242369c09cb7abb9ac59f6189</span>（この値と一致しないZIPは使わないでください）<br>ファイルサイズ（参考）：<strong id="zipSize">33,349バイト</strong>。サイズの一致だけでは配布元や中身を確認できません。</p>
           <div style="margin:12px 0">
-            <a class="btn btn-primary" id="dlKitBtn" href="guided-rescue-kit.zip" download>専用キット（ZIP）をダウンロード</a>
+            <a class="btn btn-primary" id="dlKitBtn" data-zip="guided-rescue-kit.zip" data-v8-release-ready="true" hidden inert>専用キット（ZIP）をダウンロード</a>
           </div>
-          <p class="hint">ダウンロードしたZIPの確認用 SHA-256：<span class="mono" id="zipSha256">2913df9876567c658bf535fbbdc3a6abbaec91c242369c09cb7abb9ac59f6189</span>（この値と一致しないZIPは使わないでください）</p>
           <p class="hint">※ Windowsパソコン用です。Pythonが無いパソコンでも、START.bat が案内します。</p>
           <p class="hint"><strong class="crit">警告画面が出たときの進み方：</strong>START.bat を開いたときに、青い画面「Windows によって PC が保護されました」などの警告が出たら、その場では実行しないでください。まず、警告の種類と、ファイル名が START.bat かどうかを確認してください。ウイルスが検出されたという警告なら、実行しないでください。「発行元が不明」という警告の場合は、ダウンロードしたZIPファイルのSHA-256が、このページに載っている配布ZIPのSHA-256と一致するか確認してください。値が一致しても、それだけで安全が保証されるわけではありません。配布元が公式のページ（rescue.mukiguri.com）であることも確かめてください。進むかどうかは、ZIPの中の「まず読んでください」に書いてある手順に従って判断してください。一致しない・確認できない場合は実行しないでください。人から送られてきたファイルは、警告が出なくても実行しないでください。詳しいやり方は、ZIPの中の「まず読んでください」にも書いてあります。</p>
-          <p class="hint">この方法は、2026-11-19に実際のPolygonチェーンで「委任の付け替え→解除→NFT回収」まで全工程の成功を確認済みです。</p>
-          <p class="hint">ダウンロードしたZIPのサイズは <strong>33,349バイト</strong> です。サイズが大きく違うものは本物ではないので、使わないでください。このページが開けない時のために、同じZIPの予備を <a href="https://github.com/southwind1363-bot/wallet-rescue-kit/releases/tag/v2026.11.19" target="_blank" rel="noopener">GitHub</a> にも置いてあります（予備は予備で、案内はこのページが正本です）。</p>
+          <p class="hint">2026-11-19の全工程確認はその時点の旧版の結果です。この版の確認結果ではありません。</p>
+          <p class="hint">このページが開けない時のために、同じZIPの予備を <a href="https://github.com/southwind1363-bot/wallet-rescue-kit/releases/tag/v2026.11.19" target="_blank" rel="noopener">GitHub</a> にも置いてあります（予備は予備で、案内はこのページが正本です）。</p>
         </div>
 
         <div id="patternB" style="margin-top:22px">
@@ -490,11 +505,11 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
           <div class="red-box"><b>パターンBの注意：</b>①外せるのは「委任」だけです。NFTやお金は動きません。②手数料はやられたウォレット持ちです。鍵が漏れている場合、残高を足すと犯人と取り合いになる危険があります。③この操作で知らない委任先が外せることは、2026-11-20に実際のPolygonチェーン上でテストして確認済みです（委任先がMetaMask公式でない場合でも外せました）。ただし、MetaMaskのバージョンによっては「スマートアカウント」の画面自体が無いことがあります。その場合や、外れなかった場合、NFTも救出したい場合は、パターンAを使ってください。④手数料ぶんのPOLが被害ウォレットに無い場合は、パターンBは使えません。被害ウォレットにお金を送るのは危険なので、その場合もパターンAを使ってください。</div>
           <p class="hint">この方法は、2026-11-20に実際のPolygonチェーンで「知らない委任先が付いた状態→MetaMaskのスイッチをオフ→委任が消えた」ことまでを確認済みです。</p>
         </div>
-        <div class="teal-box"><b>✅ ステップ3の完了の目印：</b>パターンAなら専用キットのダウンロードが終わっていること。パターンBならMetaMaskでスイッチをオフにする操作が終わっていること。どちらも、終わったらステップ4で確かめます。</div>
+        <div class="teal-box"><b>ステップ3の進み方を確認する：</b>パターンAのダウンロードだけでは回収は終わりません。パターンBならMetaMaskでスイッチをオフにする操作が終わっていること。どちらも、終わったらステップ4で確かめます。</div>
       </section>
 
       <!-- STEP 4 FINAL -->
-      <section class="card" id="step4">
+      <section class="card" id="step4" data-desktop-only hidden inert>
         <h2><span class="num">4</span>最終確認と、被害ウォレットの引退</h2>
         <p class="sub">最後に「本当に終わったか」を確かめます。ここを飛ばすと、委任が残ったまま気づかないことがあります。</p>
         <ol class="do-list">
@@ -507,7 +522,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
       </section>
 
       <!-- DESKTOP -->
-      <section class="card">
+      <section class="card" data-desktop-only hidden inert>
         <h2>🖥️ すぐ開けるようにする（ブックマーク）</h2>
         <p class="sub">このページは、アドレス（URL）でいつでも開けます。次からすぐ開けるよう、ブックマークしておくのがおすすめです。</p>
         <div class="desktop-guide">
@@ -517,7 +532,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
       </section>
 
       <!-- FAQ -->
-      <section class="card faq">
+      <section class="card faq" data-desktop-only hidden inert>
         <h2>よくある疑問（困ったらまずここ）</h2>
         <details open><summary>結局、必要なものはこのファイルだけですか？</summary><p>確認（ステップ1）とNFTリスト（ステップ2）と、進み方の選択（ステップ3）はこのページで行います。実行は、パターンAなら専用キット（ZIP、ステップ3からダウンロード）、パターンBならMetaMaskの中の操作です。他に必要なのは、安全なウォレット、少額のPOLだけです（Alchemyの無料キーは、ステップ2の方法Bを使う人だけ）。</p></details>
         <details><summary>他の人も使えますか？</summary><p>使えます。このページのアドレス（URL）を教えるだけです。条件は「本人がまだ秘密鍵／シードフレーズを知っていること」「署名は本人が自分のPCの中でやること」「救出先ウォレットと少額のガス代があること」です。特定の人のアドレスは最初から入っていないので、誰が開いても空の状態で始まります。ただし救出できるのは、その人のウォレットにまだ残っている分だけです。</p></details>
@@ -542,29 +557,29 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
         <h2>🔒 安全ルール（絶対）</h2>
         <ul>
           <li><strong class="crit-l">秘密鍵・シードフレーズは誰にも教えない。</strong>AIにも、サポートを名乗る人にも。このページにも入力欄はありません。</li>
-          <li>署名は<strong>パターンAの専用キットの中か、MetaMaskの画面だけ</strong>。内容が分からない署名は「拒否」が正解です。</li>
-          <li>被害ウォレットに<strong>ガス代を入れない</strong>（パターンAの決まりです。ガス代は安全なウォレットで用意します）。例外はパターンBのときだけで、その場合も入れるのは最小限にしてください。</li>
+          <li data-desktop-only hidden inert>署名は<strong>パターンAの専用キットの中か、MetaMaskの画面だけ</strong>。内容が分からない署名は「拒否」が正解です。</li>
+          <li data-desktop-only hidden inert>被害ウォレットに<strong>ガス代を入れない</strong>（パターンAの決まりです。ガス代は安全なウォレットで用意します）。例外はパターンBのときだけで、その場合も入れるのは最小限にしてください。</li>
           <li>見覚えのないNFTやトークンの<strong class="crit-l">リンクを開かない・承認しない</strong>。</li>
-          <li>専用キットは<strong class="crit-l">このページのステップ3からダウンロードしたものだけ</strong>を使う。出所の分からないZIPは開かない。</li>
+          <li data-desktop-only hidden inert>専用キットは<strong class="crit-l">このページのステップ3からダウンロードしたものだけ</strong>を使う。出所の分からないZIPは開かない。</li>
           <li>アドレスは公開情報ですが、<strong>残高と結びつくのでSNSに貼らない</strong>のが無難です。</li>
         </ul>
       </div>
       <div class="card" style="margin-top:20px">
         <h2 style="font-size:18px">進み方ナビ</h2>
         <ul class="prog">
-          <li><a href="#intro">はじめに</a><span>説明を先に読む</span></li>
-          <li><a href="#step0">ステップ0 準備</a><span>そろえるものを確認</span></li>
+          <li data-desktop-only hidden inert><a href="#intro">はじめに</a><span>説明を先に読む</span></li>
+          <li data-desktop-only hidden inert><a href="#step0">ステップ0 準備</a><span>そろえるものを確認</span></li>
           <li><a href="#step1">ステップ1 確認</a><span>委任・Nonceを見るだけ</span></li>
           <li><a href="#step15">ステップ1.5 許可の棚卸し</a><span>残っている許可を見るだけ</span></li>
           <li><a href="#step2">ステップ2 NFT一覧</a><span>残っているNFTをリスト化</span></li>
-          <li><a href="#step3">ステップ3 進み方を選ぶ</a><span>パターンA／パターンB</span></li>
-          <li><a href="#step4">ステップ4 最終確認</a><span>委任が消えたか確認・引退</span></li>
+          <li data-desktop-only hidden inert><a href="#step3">ステップ3 進み方を選ぶ</a><span>パターンA／パターンB</span></li>
+          <li data-desktop-only hidden inert><a href="#step4">ステップ4 最終確認</a><span>委任が消えたか確認・引退</span></li>
           
           
           
         </ul>
       </div>
-      <div class="card" style="margin-top:20px">
+      <div class="card" style="margin-top:20px" data-desktop-only hidden inert>
         <h2 style="font-size:18px">困ったときの順番</h2>
         <ol style="margin:0;padding-left:20px;color:var(--muted);font-size:14.5px">
           <li>まずステップ1で<strong style="color:var(--text)">現状を確認</strong>する</li>
@@ -575,7 +590,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
       </div>
     </aside>
   </div>
-  <p class="foot">ウォレット救出キット（デスクトップ用・オールインワン）— このページで確認と進み方の選択を行い、実行はパターンA（専用キット）またはパターンB（MetaMask内）で行います。表示は確認時点のブロックチェーン公開情報に基づきます。</p>
+  <p class="foot">このページで行うのは公開情報の確認です。ウォレットを接続せず、送金・署名を行いません。</p>
 </div>
 
 <script>
@@ -1276,8 +1291,8 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
 
 
 <script>
-/* step-flow controller v4 (added 2026-11-19) */
-(function(){
+/* Existing Windows guide; created only on explicit Windows selection. */
+function createWindowsGuide(){
   var secs=[].slice.call(document.querySelectorAll('#intro,#step0,#step1,#step15,#step2,#step3,#step4,#step5,#step6,#step7'));
   secs.forEach(function(s){ s.classList.add('stepsec'); });
   var GUIDE=[
@@ -1340,7 +1355,7 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
       if(item.key==='fin' && route()==='OK') txt='委任については問題ありませんでした。ただし、ステップ1.5「許可の棚卸し」の確認がまだの人や、確認できなかった許可がある人は、そちらも必ず見てください。許可が残っている場合は、この限りではありません';
       document.getElementById('gdText').textContent=txt;
       document.getElementById('gdBack').disabled = (gi===0);
-      document.getElementById('gdNext').textContent = (gi===GUIDE.length-1) ? '完了（全部表示に戻る）' : '次へ →';
+      document.getElementById('gdNext').textContent = (gi===GUIDE.length-1) ? '案内を閉じる' : '次へ →';
       progLinks.forEach(function(a){ a.classList.toggle('gd-cur', a.getAttribute('href')==='#'+item.sec); });
       var sec=document.getElementById(item.sec);
       var target = item.el ? document.querySelector(item.el) : sec;
@@ -1405,14 +1420,84 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
   });
   progLinks.forEach(function(a){
     a.addEventListener('click', function(ev){
-      if(mode!=='guide') return;
+      if(!document.body.classList.contains('v8-desktop') || mode!=='guide') return;
       var id=(a.getAttribute('href')||'').slice(1);
       for(var i=0;i<GUIDE.length;i++){ if(GUIDE[i].sec===id){ ev.preventDefault(); gi=i; render(); return; } }
       ev.preventDefault();
     });
   });
   render();
+}
+/* BEGIN V8 READ-ONLY GUARD */
+(function(){
+  'use strict';
+  const d = document, btn = d.getElementById('desktopGuide');
+  const boundary = d.getElementById('readOnlyBoundary');
+  const zip = d.getElementById('dlKitBtn'), pending = d.getElementById('v8ZipPending');
+  const desktopNodes = Array.from(d.querySelectorAll('[data-desktop-only]'));
+  const readNodes = Array.from(d.querySelectorAll('#step15,#step2,.prog a[href="#step15"],.prog a[href="#step2"]'));
+  let desktop = false, guideCreated = false;
+  let inputQuery = null;
+  try { inputQuery = window.matchMedia('(hover: hover) and (pointer: fine)'); }
+  catch (_) {}
+  const show = (node, enabled) => {
+    node.hidden = !enabled;
+    if (enabled) node.removeAttribute('inert'); else node.setAttribute('inert','');
+  };
+  function isConfirmedWindows(){
+    const n=window.navigator || {}, ua=n.userAgent || '';
+    if (!/Windows NT/i.test(ua) || !/^Win/i.test(n.platform || '') ||
+        /Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(ua) ||
+        (n.userAgentData && (n.userAgentData.mobile !== false || n.userAgentData.platform !== 'Windows'))) return false;
+    // Touch alone is not conclusive. Keep requiring the primary input to hover and be precise.
+    return !!inputQuery && inputQuery.matches === true;
+  }
+  function renderBoundary(){
+    if (desktop && !isConfirmedWindows()) desktop=false;
+    const selected=d.querySelector('.chain[aria-pressed="true"]');
+    const polygon=!!selected && selected.getAttribute('data-chain')==='polygon';
+    btn.hidden=!isConfirmedWindows();
+    btn.textContent=desktop ? '確認だけに戻る' : 'Windows PC用の案内を開く';
+    d.body.classList.toggle('v8-desktop',desktop);
+    desktopNodes.forEach(node=>show(node,desktop));
+    readNodes.forEach(node=>show(node,desktop || polygon));
+    const digest=(d.getElementById('zipSha256').textContent||'').trim();
+    const useZip=desktop && zip.getAttribute('data-v8-release-ready')==='true' &&
+      /^[0-9a-f]{64}$/i.test(digest) && zip.getAttribute('data-zip')==='guided-rescue-kit.zip';
+    show(zip,useZip);
+    if (useZip){
+      zip.setAttribute('href','guided-rescue-kit.zip');
+      zip.setAttribute('download','');
+    } else {
+      zip.removeAttribute('href');
+      zip.removeAttribute('download');
+    }
+    pending.hidden=!desktop || useZip;
+    boundary.textContent=desktop ? 'Windows PC用の案内を表示中です。先に公開情報を確認してください。'
+      : (polygon ? 'ここでは、公開情報とPolygonの許可・NFT一覧まで確認できます。'
+        : 'このチェーンでできるのは最初の確認までです。許可の棚卸し・NFT一覧はPolygonのみ対応です。')
+        + ' 実行の案内は、ご自身のWindows PCでこの配布ページを開き直してください。';
+  }
+  btn.addEventListener('click', ()=>{
+    if (!isConfirmedWindows()) return;
+    desktop=!desktop;
+    if (desktop && !guideCreated){
+      createWindowsGuide();
+      guideCreated=true;
+    }
+    renderBoundary();
+  });
+  d.querySelectorAll('.chain').forEach(btn=>btn.addEventListener('click',renderBoundary));
+  window.addEventListener('pageshow', event=>{if(event.persisted) desktop=false;renderBoundary();});
+  window.addEventListener('resize',renderBoundary);
+  if (inputQuery){
+    if (typeof inputQuery.addEventListener === 'function') inputQuery.addEventListener('change',renderBoundary);
+    else if (typeof inputQuery.addListener === 'function') inputQuery.addListener(renderBoundary);
+  }
+  renderBoundary();
 })();
+
+/* END V8 READ-ONLY GUARD */
 </script>
 </body>
 </html>
