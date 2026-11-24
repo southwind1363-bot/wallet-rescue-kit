@@ -285,7 +285,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
           <div><b>ガス代</b><p>ブロックチェーンを使う手数料。Polygonでは POL という通貨で払います。救出作業のガス代は、安全なウォレット側が払います。</p></div>
           <div><b>RescueBatch（レスキュー・バッチ）</b><p>救出専用の小さなプログラム（コントラクト）。被害ウォレットに一時的にこれを委任先にすることで、安全に「移転の許可」を出せるようになります。パターンAの専用キットに含まれていて、キットがチェーン上に置きます。</p></div>
           <div><b>署名</b><p>「これは確かに本人（鍵の持ち主）が許可しました」という電子的な実印。パターンAでは、専用キットがあなたのパソコンの中で作ります。署名は「許可証」のようなものです。種類によっては、資産を動かす許可そのものになります（今回の「委任」も、署名で付けられました）。だから、内容が分からない署名は絶対にしないでください。パターンAの署名は、あなたのPCの中で、キットが画面に表示した内容についてだけ作られます。</p></div>
-          <div><b>トランザクション（Tx）</b><p>チェーン上に記録される「実際の処理の実行」。送金や許可の実行はTxになって初めて起きます。パターンAでは、キットがまず2回に分けて送ります（Tx1：委任の付け替えと移転の許可、Tx2：委任の解除）。そのあと、安全なウォレットから回収の送信を行います。Tx1の後で止まってしまっても、許可の向きは安全なウォレットだけなので、あわてずにキットを再開すれば続きができます。</p></div>
+          <div><b>トランザクション（Tx）</b><p>チェーン上に記録される「実際の処理の実行」。送金や許可の実行はTxになって初めて起きます。パターンAでは、キットがまず2回に分けて送ります（Tx1：委任の付け替えと移転の許可、Tx2：委任の解除）。そのあと、安全なウォレットから回収の送信を行います。Tx1の後で止まった場合、このキットの外で出された許可が残っていることがあります。結果が分からない取引を送り直さないでください。再開できるかどうかは、キットが状態を確認して判断します（確認できない場合は、無理に進めず止まります）。</p></div>
           <div><b>approveAll／setApprovalForAll</b><p>「私のNFTを、あの人（安全なウォレット）が代わりに動かしてもいいですよ」という一括許可。これがないと回収できません。</p></div>
           <div><b>transferFrom</b><p>許可をもらった側が、NFTを実際に引き取る処理。パターンAで、安全なウォレットがこれを実行します。</p></div>
           <div><b>MetaMask</b><p>ブラウザに入れるウォレット拡張機能。パターンBでは、このアプリの中の操作で委任を外します。</p></div>
@@ -337,7 +337,7 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
           <button type="button" class="chain" data-chain="ethereum" aria-pressed="false"><b>Ethereum</b><span>メインネット ・ ETH</span></button>
           <button type="button" class="chain" data-chain="base" aria-pressed="false"><b>Base</b><span>ベース ・ ETH</span></button>
         </div>
-        <p class="hint">※ 確認は3チェーン対応ですが、救出の実行（パターンA）は <strong>Polygon のみ</strong> 対応です（検証済みなのがPolygonのため）。Ethereum／Baseで被害に遭った場合は、確認までを行い、実行は詳しい人に相談してください。</p>
+        <p class="hint">※ 確認は3チェーン対応ですが、救出の実行（パターンA）は <strong>Polygon のみ</strong> 対応です（従来版で検証した記録があるのがPolygonのため）。Ethereum／Baseで被害に遭った場合は、確認までを行い、実行は詳しい人に相談してください。</p>
 
         <label class="label" for="addr">ウォレットアドレス（被害ウォレット）</label>
         <div class="addr-row">
@@ -470,9 +470,11 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
           <div style="margin:12px 0">
             <a class="btn btn-primary" id="dlKitBtn" href="guided-rescue-kit.zip" download>専用キット（ZIP）をダウンロード</a>
           </div>
-          <p class="hint">※ Windowsパソコン用です。Pythonが無いパソコンでも、START.bat が案内します。青い画面「Windows によって PC が保護されました」が出たら「詳細情報」→「実行」。やり方はZIPの中の「まず読んでください」に全部書いてあります。</p>
+          <p class="hint">ダウンロードしたZIPの確認用 SHA-256：<span class="mono" id="zipSha256">2913df9876567c658bf535fbbdc3a6abbaec91c242369c09cb7abb9ac59f6189</span>（この値と一致しないZIPは使わないでください）</p>
+          <p class="hint">※ Windowsパソコン用です。Pythonが無いパソコンでも、START.bat が案内します。</p>
+          <p class="hint"><strong class="crit">警告画面が出たときの進み方：</strong>START.bat を開いたときに、青い画面「Windows によって PC が保護されました」などの警告が出たら、その場では実行しないでください。まず、警告の種類と、ファイル名が START.bat かどうかを確認してください。ウイルスが検出されたという警告なら、実行しないでください。「発行元が不明」という警告の場合は、ダウンロードしたZIPファイルのSHA-256が、このページに載っている配布ZIPのSHA-256と一致するか確認してください。値が一致しても、それだけで安全が保証されるわけではありません。配布元が公式のページ（rescue.mukiguri.com）であることも確かめてください。進むかどうかは、ZIPの中の「まず読んでください」に書いてある手順に従って判断してください。一致しない・確認できない場合は実行しないでください。人から送られてきたファイルは、警告が出なくても実行しないでください。詳しいやり方は、ZIPの中の「まず読んでください」にも書いてあります。</p>
           <p class="hint">この方法は、2026-11-19に実際のPolygonチェーンで「委任の付け替え→解除→NFT回収」まで全工程の成功を確認済みです。</p>
-          <p class="hint">ダウンロードしたZIPのサイズは <strong>12,664バイト</strong> です。サイズが大きく違うものは本物ではないので、使わないでください。このページが開けない時のために、同じZIPの予備を <a href="https://github.com/southwind1363-bot/wallet-rescue-kit/releases/tag/v2026.11.19" target="_blank" rel="noopener">GitHub</a> にも置いてあります（予備は予備で、案内はこのページが正本です）。</p>
+          <p class="hint">ダウンロードしたZIPのサイズは <strong>33,349バイト</strong> です。サイズが大きく違うものは本物ではないので、使わないでください。このページが開けない時のために、同じZIPの予備を <a href="https://github.com/southwind1363-bot/wallet-rescue-kit/releases/tag/v2026.11.19" target="_blank" rel="noopener">GitHub</a> にも置いてあります（予備は予備で、案内はこのページが正本です）。</p>
         </div>
 
         <div id="patternB" style="margin-top:22px">
@@ -519,12 +521,12 @@ body.guide .stepsec .why,body.guide .stepsec .hint,body.guide .stepsec .sub{disp
         <h2>よくある疑問（困ったらまずここ）</h2>
         <details open><summary>結局、必要なものはこのファイルだけですか？</summary><p>確認（ステップ1）とNFTリスト（ステップ2）と、進み方の選択（ステップ3）はこのページで行います。実行は、パターンAなら専用キット（ZIP、ステップ3からダウンロード）、パターンBならMetaMaskの中の操作です。他に必要なのは、安全なウォレット、少額のPOLだけです（Alchemyの無料キーは、ステップ2の方法Bを使う人だけ）。</p></details>
         <details><summary>他の人も使えますか？</summary><p>使えます。このページのアドレス（URL）を教えるだけです。条件は「本人がまだ秘密鍵／シードフレーズを知っていること」「署名は本人が自分のPCの中でやること」「救出先ウォレットと少額のガス代があること」です。特定の人のアドレスは最初から入っていないので、誰が開いても空の状態で始まります。ただし救出できるのは、その人のウォレットにまだ残っている分だけです。</p></details>
-        <details><summary>盗まれた後でも、救出できますか？</summary><p>本人が鍵をまだ知っている限り、「まだウォレットに残っている資産」は救出できます（パターンAの方式は、実際のPolygonチェーンで検証済み）。ただし、すでに攻撃者に送り出された資産自体は戻せません。転売されて第三者に渡ったNFTも戻せません。鍵もシードも失った場合は救出できません。</p></details>
+        <details><summary>盗まれた後でも、救出できますか？</summary><p>本人が鍵をまだ知っていて、他の条件も揃えば、「まだウォレットに残っている資産」を救出できる場合があります（パターンAの方式は、従来版で実際のPolygonチェーンで検証した記録があります）。ただし、すでに攻撃者に送り出された資産自体は戻せません。転売されて第三者に渡ったNFTも戻せません。鍵もシードも失った場合は救出できません。</p></details>
         <details><summary>秘密鍵を入れる画面はありますか？</summary><p>このページにはありません。パターンAの専用キットでは、あなたのパソコンの中の入力欄（打っても文字が見えない欄）でだけ秘密鍵を使います。それ以外の場所（Webサイト・チャット・メール）で秘密鍵を入力させる画面が出たら、それはこのキットではありません。すぐに閉じてください。</p></details>
         <details><summary>公式Delegatorへの委任は危険ですか？</summary><p>MetaMaskの公式EIP-7702 Delegator（<span style="font-family:monospace;font-size:12.5px">0x63c0c19a282a1b52b07dd5a65b58948a07dae32b</span>）への委任は、MetaMaskのスマートアカウント機能によるものです。ステップ1の確認では、このアドレスかどうかを判定して表示します。公式委任で心当たりがある場合は、無理に救出を実行する必要はありません。</p></details>
         <details><summary>MetaMaskの画面が英語で分かりません</summary><p>パターンBの操作で出る画面は、まず「どのアカウントで」「何をするか」だけ見てください。「Smart account」はスマートアカウントのこと、「Standard account (EOA)」は委任を外した通常のアカウントのことです。英語の画面で進めるのが不安な場合は、無理をせずパターンA（日本語の案内つきキット）を使ってください。</p></details>
         <details><summary>なぜブラウザ（MetaMask）で署名できないのですか？</summary><p>委任の付け替えに必要な署名は、現在のMetaMaskではウェブサイトから作れない仕様になっています（古い署名方式は廃止され、代わりの方式もMetaMaskは提供していません）。そのためパターンAでは、パソコンで動く専用キットの中で署名します。これは仕様上の制限で、このページの不具合ではありません。</p></details>
-        <details><summary>途中でページを閉じてしまいました</summary><p>ステップ2まで（確認だけ）なら、最初からやり直せば大丈夫です。パターンAの途中で止めた場合は、専用キットの案内に従ってください（途中で止めても状況は悪くなりません）。パターンBはMetaMaskの中の操作なので、このページを閉じても影響ありません。どの場合も、再開するときはまずステップ1で現状を確認してください。</p></details>
+        <details><summary>途中でページを閉じてしまいました</summary><p>ステップ2まで（確認だけ）なら、最初からやり直せば大丈夫です。パターンAの専用キットは、確認の段階で止めるのは大丈夫です。ただし、キットが署名と送信の段階に入ったら、最後まで進めてください。途中で閉じて放置しないでください（やむを得ず止めたときは、放置せず、キットの案内に従って、まず状態の確認をしてください。再開できるかどうかは、その確認の結果で決まります）。パターンBはMetaMaskの中の操作なので、このページを閉じても影響ありません。どの場合も、再開するときはまずステップ1で現状を確認してください。</p></details>
         <details><summary>このページは安全ですか？</summary><p>このページ自体は、確認（読み取り）と案内だけを行います。秘密鍵の入力欄はなく、入力した内容が作者のサーバーに送られることもありません。実行は、あなたのパソコンの中（パターンA）か、MetaMaskの中（パターンB）で完結します。詳しくはステップ0の「プライバシーについて」を見てください。</p></details>
       </section>
     <section class="card">
@@ -631,15 +633,44 @@ function renderNfts(){
   if(W.nfts.length>0){
     setStatus('nftSummary','<strong>'+W.nfts.length+' 件</strong>のNFTがリストに入っています。対象コントラクトは '+nftContracts().length+' 種類です。このリストは記録用です。','on');
     var ok=$('nftOk'); ok.style.display='block'; ok.innerHTML='<b>'+W.nfts.length+' 件のNFTがリストに入りました。</b> ステップ2は完了です。ステップ3へ進んでください。';
+  } else {
+    var okE=$('nftOk'); if(okE) okE.style.display='none';
+    $('nftSummary').innerHTML='';
   }
   updateButtons();
 }
 
+/* ---------- Read-only result validation and request lifetime ---------- */
+var readEpoch=0, readSerial={};
+function invalidateReadScope(){ readEpoch++; }
+function readTicket(kind, addr){
+  var order=(readSerial[kind]||0)+1; readSerial[kind]=order;
+  return {kind:kind, order:order, epoch:readEpoch, addr:addr, chain:current};
+}
+function readCurrent(t){
+  return readSerial[t.kind]===t.order && readEpoch===t.epoch &&
+    $('addr').value.trim()===t.addr && current===t.chain;
+}
+function uintWord(x){ return typeof x==='string' && /^0x[0-9a-fA-F]{64}$/.test(x); }
+function ownerWord(x){ return uintWord(x) && /^0x0{24}[0-9a-fA-F]{40}$/.test(x) && !/^0x0{64}$/.test(x); }
+function uintQuantity(x){ return typeof x==='string' && /^0x(?:0|[1-9a-fA-F][0-9a-fA-F]{0,63})$/.test(x); }
+function byteData(x){ return typeof x==='string' && /^0x(?:[0-9a-fA-F]{2})*$/.test(x); }
+function tokenNumber(x){
+  if(typeof x!=='string' || !/^(?:[0-9]{1,78}|0x[0-9a-fA-F]{1,64})$/.test(x)) return null;
+  try{ var v=BigInt(x); return v<(1n<<256n) ? v : null; }catch(e){ return null; }
+}
 /* ---------- Step 1: read-only check ---------- */
 document.querySelectorAll('.chain').forEach(function(b){
   b.addEventListener('click', function(){
     document.querySelectorAll('.chain').forEach(function(x){x.setAttribute('aria-pressed','false')});
-    b.setAttribute('aria-pressed','true'); current = b.getAttribute('data-chain');
+    b.setAttribute('aria-pressed','true'); current = b.getAttribute('data-chain'); invalidateReadScope(); resetApprovalReads();
+    /* チェーンが変わったら、前のチェーンの診断・おすすめ・許可表示・NFTリストは無効にする */
+    $('results').style.display='none'; $('emptyState').style.display='block';
+    var vc=$('verdict'); if(vc) vc.className='verdict';
+    var rc=$('choiceRecommend'); if(rc) rc.innerHTML='';
+    var al=$('apprList'); if(al) al.innerHTML='';
+    var as=$('apprSummary'); if(as) as.innerHTML='';
+    verifyGroups=[]; renderVerify(); W.nfts=[]; W.listAddr=null; renderNfts();
   });
 });
 function rpcCall(rpcs, method, params){
@@ -667,14 +698,18 @@ $('runBtn').addEventListener('click', function(){
     showErr('err','アドレスの形式がちがいます。「0x」から始まる42文字のアドレスを貼り付けてください。');
     return;
   }
-  var cfg = CHAINS[current];
+  var cfg = CHAINS[current]; var ticket=readTicket('diagnosis',addr);
   var btn=$('runBtn'); btn.disabled=true; $('spin').style.display='block'; $('runLabel').textContent='確認中…';
+  $('results').style.display='none'; $('emptyState').style.display='block'; var vc0=$('verdict'); if(vc0) vc0.className='verdict'; var rc0=$('choiceRecommend'); if(rc0) rc0.innerHTML='';
   Promise.all([
     rpcCall(cfg.rpcs,'eth_getCode',[addr,'latest']),
     rpcCall(cfg.rpcs,'eth_getBalance',[addr,'latest']),
     rpcCall(cfg.rpcs,'eth_getTransactionCount',[addr,'latest'])
   ]).then(function(res){
-    var code=res[0]||'0x', bal=res[1], nonce=res[2];
+    if(!readCurrent(ticket)) return;
+    if(res[0]==null || res[1]==null || res[2]==null) throw new Error('missing');
+    if(!byteData(res[0]) || !uintQuantity(res[1]) || !uintQuantity(res[2]) || (/^0xef0100/i.test(res[0]) && res[0].length!==48)) throw new Error('format');
+    var code=res[0], bal=res[1], nonce=res[2];
     $('emptyState').style.display='none'; $('results').style.display='block';
     var delegate=null;
     if(code && code.toLowerCase().indexOf('0xef0100')===0 && code.length>=48){ delegate='0x'+code.slice(8,48).toLowerCase(); }
@@ -684,7 +719,7 @@ $('runBtn').addEventListener('click', function(){
     verdict.className='verdict '+( !isDelegated ? 'ok' : (isOfficial ? 'warn' : 'danger') );
     $('vIcon').textContent = !isDelegated ? '✅' : (isOfficial ? '🟡' : '🔴');
     $('vTitle').textContent = !isDelegated ? '委任は付いていません' : (isOfficial ? '公式の委任が付いています' : '不明な委任先への委任があります');
-    $('vText').textContent = !isDelegated ? 'EIP-7702の委任は検出されませんでした。通常のウォレットの状態です。' : (isOfficial ? '委任先はMetaMask公式Delegatorです。MetaMaskのスマートアカウント機能によるものと考えられます。心当たりがない場合も、あわてて送金せず手順を確認してください。' : '委任先が公式アドレスではありません。盗まれた後の可能性があります。資産を新たに入れず、ステップ2以降の手順で委任の付け替え・解除を進めてください。本人が鍵を知っていれば、まだ残っている分は救出できます（すでに移された分は戻せません）。署名を求める怪しいサイトには絶対に応じないでください。');
+    $('vText').textContent = !isDelegated ? 'EIP-7702の委任は検出されませんでした。通常のウォレットの状態です。' : (isOfficial ? '委任先はMetaMask公式Delegatorです。MetaMaskのスマートアカウント機能によるものと考えられます。心当たりがない場合も、あわてて送金せず手順を確認してください。' : '委任先が公式アドレスではありません。盗まれた後の可能性があります。資産を新たに入れず、ステップ2以降の手順で委任の付け替え・解除を進めてください。本人が鍵を知っていれば、条件が揃えば、まだ残っている分を救出できる場合があります（すでに移された分は戻せません）。署名を求める怪しいサイトには絶対に応じないでください。');
     $('sDelegate').textContent = !isDelegated ? 'なし' : (isOfficial ? 'あり（公式）' : 'あり（不明）');
     $('sDelegateNote').textContent = !isDelegated ? 'EIP-7702委任なし' : (isOfficial ? 'MetaMask公式Delegatorへの委任' : '公式ではないアドレスへの委任');
     $('sBalance').textContent = hexToDecimal(bal,18)+' '+cfg.symbol;
@@ -702,15 +737,28 @@ $('runBtn').addEventListener('click', function(){
     if(current==='polygon'){ W.victim = addr; W.victimNonce = parseInt(nonce,16); refreshSignSummary(); }
     $('results').scrollIntoView({behavior:'smooth',block:'nearest'});
   }).catch(function(){
+    if(!readCurrent(ticket)) return;
     showErr('err','チェーンから情報を取得できませんでした。少し待ってから、もう一度「確認する」を押してください。ネットワーク接続もご確認ください。');
   }).finally(function(){
     btn.disabled=false; $('spin').style.display='none'; $('runLabel').textContent='確認する →';
   });
 });
 $('addr').addEventListener('keydown', function(e){ if(e.key==='Enter'){ $('runBtn').click(); } });
+$('addr').addEventListener('input', function(){
+  invalidateReadScope(); resetApprovalReads();
+  /* アドレスが変わったら、前のアドレスの診断・おすすめ・許可表示・NFTリストは無効にする */
+  $('results').style.display='none'; $('emptyState').style.display='block';
+  var vc=$('verdict'); if(vc) vc.className='verdict';
+  var rc=$('choiceRecommend'); if(rc) rc.innerHTML='';
+  var al=$('apprList'); if(al) al.innerHTML='';
+  var as=$('apprSummary'); if(as) as.innerHTML='';
+  verifyGroups=[]; renderVerify(); W.nfts=[]; W.listAddr=null; renderNfts();
+});
 
 /* ---------- Step 1.5: approval scan (read-only, no API key) ---------- */
-var APPR = { addr:null, from:null, to:null, pairs:{}, live:[], cleared:0, running:false };
+function emptyApprovalReads(){ return {addr:null, from:null, to:null, pairs:{}, live:[], cleared:0, unknown:0, running:false}; }
+var APPR=emptyApprovalReads();
+function resetApprovalReads(){ APPR=emptyApprovalReads(); W.approvalDanger=false; apprSetBusy(false); }
 var APPR_SPAN = 5000000, APPR_CHUNK = 250000;
 var LOG_RPCS = ['https://polygon.gateway.tenderly.co','https://polygon-bor-rpc.publicnode.com','https://polygon.drpc.org'];
 var TOPIC_APPROVAL = '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925';
@@ -730,33 +778,33 @@ function logRpc(method, params){
 function topicAddr(a){ return '0x'+'0'.repeat(24)+a.slice(2).toLowerCase(); }
 function padAddr(a){ return a.slice(2).toLowerCase().padStart(64,'0'); }
 function ethCall(to, data){ return rpcCall(CHAINS.polygon.rpcs,'eth_call',[{to:to, data:data},'latest']); }
-function apprFetchLogs(f, t){
-  var owner = topicAddr(APPR.addr);
+function apprFetchLogs(f, t, owner){
   function q(topic0){ return logRpc('eth_getLogs',[{fromBlock:'0x'+f.toString(16), toBlock:'0x'+t.toString(16), topics:[topic0, owner]}]); }
-  return Promise.all([q(TOPIC_APPROVAL), q(TOPIC_AFA)]).then(function(r){ return (r[0]||[]).concat(r[1]||[]); })
+  return Promise.all([q(TOPIC_APPROVAL), q(TOPIC_AFA)]).then(function(r){ if(!r.every(function(batch,i){ var topic=i===0?TOPIC_APPROVAL:TOPIC_AFA; return Array.isArray(batch) && batch.every(function(lg){ return lg && lg.removed!==true && typeof lg.address==='string' && /^0x[0-9a-fA-F]{40}$/.test(lg.address) && Array.isArray(lg.topics) && lg.topics.length>=3 && typeof lg.topics[0]==='string' && lg.topics[0].toLowerCase()===topic && typeof lg.topics[1]==='string' && lg.topics[1].toLowerCase()===owner && ownerWord(lg.topics[2]); }); })) throw new Error('invalid logs'); return r[0].concat(r[1]); })
     .catch(function(){
-      if(t-f>50000){ var mid=f+Math.floor((t-f)/2); return apprFetchLogs(f,mid).then(function(a){ return apprFetchLogs(mid+1,t).then(function(b){ return a.concat(b); }); }); }
+      if(t-f>50000){ var mid=f+Math.floor((t-f)/2); return apprFetchLogs(f,mid,owner).then(function(a){ return apprFetchLogs(mid+1,t,owner).then(function(b){ return a.concat(b); }); }); }
       throw new Error('logs');
     });
 }
-function apprCollect(lg){
+function apprCollect(lg, scan){
   if(!lg.topics || lg.topics.length<3) return;
   var t0=(lg.topics[0]||'').toLowerCase();
   var spender='0x'+lg.topics[2].slice(26);
   var kind=(t0===TOPIC_AFA)?'AFA':'APR';
   var key=lg.address.toLowerCase()+'|'+spender.toLowerCase()+'|'+kind;
-  APPR.pairs[key]={ token:lg.address, spender:spender, kind:kind };
+  scan.pairs[key]={ token:lg.address, spender:spender, kind:kind };
 }
-function apprScanRange(fromB, toB){
+function apprScanRange(fromB, toB, scan, ticket){
   var chunks=[]; for(var b=fromB; b<=toB; b+=APPR_CHUNK){ chunks.push([b, Math.min(b+APPR_CHUNK-1, toB)]); }
   var done=0, failed=false;
   function step(i){
+    if(!readCurrent(ticket)) return Promise.resolve(false);
     if(i>=chunks.length) return Promise.resolve(!failed);
-    return apprFetchLogs(chunks[i][0], chunks[i][1]).then(function(logs){ logs.forEach(apprCollect); })
+    return apprFetchLogs(chunks[i][0], chunks[i][1], topicAddr(scan.addr)).then(function(logs){ logs.forEach(function(lg){ apprCollect(lg,scan); }); })
       .catch(function(){ failed=true; })
       .then(function(){
         done++;
-        setStatus('apprSummary','調べています… '+Math.round(done/chunks.length*100)+'%（'+done+' / '+chunks.length+' 区間）','warn');
+        if(readCurrent(ticket)) setStatus('apprSummary','調べています… '+Math.round(done/chunks.length*100)+'%（'+done+' / '+chunks.length+' 区間）','warn');
         if(failed) return false;
         return step(i+1);
       });
@@ -781,21 +829,23 @@ function decodeSym(hex){
     return s.replace(/[^\x20-\x7e]/g,'').trim();
   }catch(e){ return ''; }
 }
-function apprRecheck(){
-  var list=Object.keys(APPR.pairs).map(function(k){ return APPR.pairs[k]; });
-  var live=[], cleared=0, checked=0;
+function apprRecheck(scan,ticket){
+  var list=Object.keys(scan.pairs).map(function(k){ return scan.pairs[k]; });
+  var live=[], cleared=0, checked=0, unknown=0;
   function one(i){
-    if(i>=list.length) return Promise.resolve();
+    if(!readCurrent(ticket) || i>=list.length) return Promise.resolve();
     var p=list[i];
     setStatus('apprSummary','見つけた許可の「今の状態」を確認しています… '+(checked+1)+' / '+list.length,'warn');
     var done=function(){ checked++; return one(i+1); };
     if(p.kind==='AFA'){
-      return ethCall(p.token,'0xe985e9c5'+padAddr(APPR.addr)+padAddr(p.spender)).then(function(r){
-        if(r && BigInt(r)===BigInt(1)){ live.push({token:p.token, spender:p.spender, kind:'AFA', danger:true, limitText:'NFT全部（まとめて許可）'}); } else { cleared++; }
-      }).catch(function(){ cleared++; }).then(done);
+      return ethCall(p.token,'0xe985e9c5'+padAddr(scan.addr)+padAddr(p.spender)).then(function(r){
+        if(!uintWord(r) || BigInt(r)>1n){ unknown++; return; }
+        if(BigInt(r)===1n){ live.push({token:p.token, spender:p.spender, kind:'AFA', danger:true, limitText:'NFT全部（まとめて許可）'}); } else { cleared++; }
+      }).catch(function(){ unknown++; }).then(done);
     }
-    return ethCall(p.token,'0xdd62ed3e'+padAddr(APPR.addr)+padAddr(p.spender)).then(function(r){
-      var v=r?BigInt(r):BigInt(0);
+    return ethCall(p.token,'0xdd62ed3e'+padAddr(scan.addr)+padAddr(p.spender)).then(function(r){
+      if(!uintWord(r)){ unknown++; return null; }
+      var v=BigInt(r);
       if(v<=BigInt(0)){ cleared++; return null; }
       var unlim=(v>= (BigInt(2)**BigInt(255)));
       return Promise.all([
@@ -806,9 +856,9 @@ function apprRecheck(){
         var dec=sd[1]?parseInt(sd[1],16):18; if(!(dec>=0&&dec<=36)) dec=18;
         live.push({token:p.token, spender:p.spender, kind:'APR', danger:unlim, sym:sym, limitText: unlim?'無制限':(fmtAmt(v,dec)+' '+sym)});
       });
-    }).catch(function(){ cleared++; }).then(done);
+    }).catch(function(){ unknown++; }).then(done);
   }
-  return one(0).then(function(){ APPR.live=live; APPR.cleared=cleared; });
+  return one(0).then(function(){ scan.live=live; scan.cleared=cleared; scan.unknown=unknown; });
 }
 function renderAppr(complete){
   var box=$('apprList'); box.innerHTML='';
@@ -829,10 +879,12 @@ function renderAppr(complete){
   var rangeText='調べた範囲：ブロック '+APPR.from.toLocaleString()+' 〜 '+APPR.to.toLocaleString();
   if(!complete){
     setStatus('apprSummary','<strong>途中までしか調べられませんでした。</strong>時間をおいて、もう一度「許可を調べる」を押してください。それでもダメな場合は、revoke.cash などで確認してください。<br>'+rangeText,'warn');
+  } else if(APPR.live.length===0 && APPR.unknown>0){
+    setStatus('apprSummary','<strong>調べ終わりましたが、確認できなかった許可が '+APPR.unknown+' 件あります。</strong>通信の失敗などで今の状態を読み取れなかったため、「許可は残っていない」とは言えません。時間をおいて、もう一度「許可を調べる」を押してください。'+(APPR.cleared>0?('確認できた範囲では、すでに取り消し済み・使い終わった許可が '+APPR.cleared+' 件ありました。'):'')+'<br>'+rangeText,'warn');
   } else if(APPR.live.length===0){
     setStatus('apprSummary','<strong>調べ終わりました。</strong>今も生きている許可は見つかりませんでした（調べた範囲では）。'+(APPR.cleared>0?('すでに取り消し済み・使い終わった許可が '+APPR.cleared+' 件ありましたが、今は効いていません。'):'')+'<br>'+rangeText,'on');
   } else {
-    setStatus('apprSummary','<strong>調べ終わりました。</strong>今も生きている許可が <strong>'+APPR.live.length+' 件</strong> あります。'+(dangerCount>0?('<strong>要注意が '+dangerCount+' 件</strong>あります。見覚えのない相手なら、救出を急いでください。'):'見覚えのある相手かどうか、1件ずつ確認してください。')+'<br>'+rangeText,'warn');
+    setStatus('apprSummary','<strong>調べ終わりました。</strong>今も生きている許可が <strong>'+APPR.live.length+' 件</strong> あります。'+(dangerCount>0?('<strong>要注意が '+dangerCount+' 件</strong>あります。見覚えのない相手なら、救出を急いでください。'):'見覚えのある相手かどうか、1件ずつ確認してください。')+(APPR.unknown>0?(' <strong class="crit">確認できなかった許可が '+APPR.unknown+' 件あります。</strong>そちらは残っているかどうか分かりません。'):'')+'<br>'+rangeText,'warn');
   }
   W.approvalDanger = dangerCount>0;
   $('apprMoreBtn').disabled = !(APPR.from>0) || APPR.running;
@@ -849,23 +901,45 @@ function apprRun(extend){
   var addr=$('addr').value.trim();
   if(!/^0x[0-9a-fA-F]{40}$/.test(addr)){ showErr('apprErr','先にステップ1で被害ウォレットのアドレスを入力してください。'); return; }
   if(current!=='polygon'){ showErr('apprErr','許可の棚卸しはPolygonのみ対応です。チェーンをPolygonにしてください。'); return; }
-  if(!extend || APPR.addr!==addr){ APPR.addr=addr; APPR.pairs={}; APPR.live=[]; APPR.cleared=0; APPR.from=null; APPR.to=null; }
+  var ticket=readTicket('approvals',addr);
+  var prev=APPR;
+  var scan=emptyApprovalReads(); scan.addr=addr;
+  if(extend && prev.addr===addr && prev.from>0){
+    scan.pairs=Object.assign({},prev.pairs); scan.to=prev.to;
+  }
   apprSetBusy(true);
+  $('apprList').innerHTML='';
+  W.approvalDanger=false;
+  setStatus('apprSummary','現在の許可を確認中です。前回の結果は今回の確認には使えません。','warn');
   var getRange;
-  if(extend && APPR.from>0){
-    var t2=APPR.from-1;
+  if(scan.to!==null){
+    var t2=prev.from-1;
     getRange=Promise.resolve({from:Math.max(0,t2-APPR_SPAN+1), to:t2});
   } else {
-    getRange=logRpc('eth_blockNumber',[]).then(function(bn){ var latest=parseInt(bn,16); return {from:Math.max(0,latest-APPR_SPAN+1), to:latest}; });
+    getRange=logRpc('eth_blockNumber',[]).then(function(bn){
+      if(!uintQuantity(bn)) throw new Error('block number');
+      var latest=Number(BigInt(bn));
+      if(!Number.isSafeInteger(latest)) throw new Error('block number');
+      return {from:Math.max(0,latest-APPR_SPAN+1), to:latest};
+    });
   }
   getRange.then(function(rg){
-    if(APPR.to===null) APPR.to=rg.to;
-    return apprScanRange(rg.from, rg.to).then(function(ok){ APPR.from=rg.from; return ok; });
+    if(!readCurrent(ticket)) return false;
+    if(scan.to===null) scan.to=rg.to;
+    return apprScanRange(rg.from,rg.to,scan,ticket).then(function(ok){ scan.from=rg.from; return ok; });
   }).then(function(ok){
-    return apprRecheck().then(function(){ renderAppr(ok); });
+    if(!readCurrent(ticket)) return;
+    return apprRecheck(scan,ticket).then(function(){
+      if(!readCurrent(ticket)) return;
+      if(!ok) scan.from=prev.addr===addr && prev.from>0 ? prev.from : 0;
+      APPR=scan; renderAppr(ok);
+    });
   }).catch(function(){
-    showErr('apprErr','調べられませんでした。少し待ってから、もう一度「許可を調べる」を押してください。');
-  }).finally(function(){ apprSetBusy(false); });
+    if(readCurrent(ticket)){
+      setStatus('apprSummary','今回の許可の状態は確認できませんでした。「許可なし」とは判断できません。','warn');
+      showErr('apprErr','調べられませんでした。少し待ってから、もう一度「許可を調べる」を押してください。');
+    }
+  }).finally(function(){ if(readCurrent(ticket)) apprSetBusy(false); });
 }
 $('apprBtn').addEventListener('click', function(){ apprRun(false); });
 $('apprMoreBtn').addEventListener('click', function(){ apprRun(true); });
@@ -879,26 +953,53 @@ $('nftBtn').addEventListener('click', function(){
   if(current!=='polygon'){ showErr('nftErr','NFT取得はPolygonのみ対応です。チェーンをPolygonにしてください。'); return; }
   if(!key){ var ne=$('nftErr'); ne.className='status warn'; ne.textContent='キーが無い人は、このボタンは押さなくて大丈夫です。上の「方法A：リストを貼り付けて照合する」から進んでください。'; ne.style.display='block'; return; }
   if(/^https?:\/\//i.test(key)){ showErr('nftErr','URLが貼られています。貼るのは「キー」だけです。URLの最後の「/」の後ろにある文字列だけをコピーして貼ってください。'); return; }
+  verifyGroups=[]; renderVerify(); W.nfts=[]; W.listAddr=null; renderNfts();
+  var ticket=readTicket('nfts',addr);
   var btn=$('nftBtn'); btn.disabled=true; $('nftSpin').style.display='block'; $('nftLabel').textContent='取得中…';
-  var rows=[], pageKey=null, base='https://polygon-mainnet.g.alchemy.com/nft/v3/'+encodeURIComponent(key)+'/getNFTsForOwner';
+  var rows=[], pageKey=null, seenPages=new Set(), base='https://polygon-mainnet.g.alchemy.com/nft/v3/'+encodeURIComponent(key)+'/getNFTsForOwner';
   function fetchPage(){
     var url=base+'?owner='+addr+'&withMetadata=true&pageSize=100'+(pageKey?'&pageKey='+encodeURIComponent(pageKey):'');
     return fetch(url).then(function(r){ if(!r.ok) throw new Error('alchemy'); return r.json(); }).then(function(data){
-      (data.ownedNfts||[]).forEach(function(n){
-        rows.push({ contract:n.contract.address, tokenId:String(n.tokenId), type:(n.tokenType||'ERC721').toUpperCase(), name:(n.name|| (n.contract&&n.contract.name) ||'') });
+      if(!readCurrent(ticket)) return;
+      if(!data || !Array.isArray(data.ownedNfts)) throw new Error('unconfirmed list');
+      data.ownedNfts.forEach(function(n){
+        if(!n || !n.contract || typeof n.contract.address!=='string' || !/^0x[0-9a-fA-F]{40}$/.test(n.contract.address) || tokenNumber(n.tokenId)===null || !/^(ERC721|ERC1155)$/i.test(n.tokenType||'')) throw new Error('unconfirmed item');
+        rows.push({ contract:n.contract.address, tokenId:String(n.tokenId), type:(n.tokenType||'ERC721').toUpperCase(), name:(n.name||''), cname:((n.contract&&n.contract.name)||'') });
       });
       pageKey=data.pageKey;
-      if(pageKey) return fetchPage();
+      if(pageKey!=null){
+        if(typeof pageKey!=='string' || !pageKey.trim() || seenPages.has(pageKey)) throw new Error('unconfirmed next page');
+        seenPages.add(pageKey);
+        return fetchPage();
+      }
     });
   }
   fetchPage().then(function(){
-    W.nfts = rows; W.victim = addr; renderNfts();
+    if(!readCurrent(ticket)) return;
+    W.victim = addr; W.listAddr = addr;
+    var order=[], map={};
+    rows.forEach(function(r){
+      var c=r.contract.toLowerCase();
+      if(!map[c]){ map[c]={contract:r.contract, name:r.cname||'', owned:[], dropped:0, failed:0, checked:false}; order.push(map[c]); }
+      map[c].owned.push(r);
+    });
+    verifyGroups=order;
+    renderVerify();
+    rebuildFromVerify();
     if(rows.length===0){ setStatus('nftSummary','取得結果は <strong>0件</strong> でした。NFTが残っていない可能性があります。ステップ3以降は無理に進めず、相談してください。','warn'); }
+    else { setStatus('nftSummary','取得が終わりました（'+rows.length+' 件）。上の契約リストで、<strong>心当たりがある物だけ</strong>にチェックを入れてください。チェックした契約のNFTだけがリスト（CSV）に入ります。','warn'); }
   }).catch(function(){
-    showErr('nftErr','NFTを取得できませんでした。APIキーが正しいか、アプリのチェーンがPolygon Mainnetになっているか確認してください。');
+    if(readCurrent(ticket)) showErr('nftErr','NFTを取得できませんでした。APIキーが正しいか、アプリのチェーンがPolygon Mainnetになっているか確認してください。');
   }).finally(function(){ btn.disabled=false; $('nftSpin').style.display='none'; $('nftLabel').textContent='NFTを取得する →'; });
 });
 var verifyGroups = [];
+function invalidateNftInput(){
+  readSerial.nfts=(readSerial.nfts||0)+1;
+  verifyGroups=[]; renderVerify(); W.nfts=[]; W.listAddr=null; renderNfts();
+  $('verifyStatus').innerHTML='';
+}
+$('manualNfts').addEventListener('input',invalidateNftInput);
+$('alchemyKey').addEventListener('input',invalidateNftInput);
 function rebuildFromVerify(){
   W.nfts = [];
   verifyGroups.forEach(function(g){ if(g.checked){ W.nfts = W.nfts.concat(g.owned); } });
@@ -921,7 +1022,8 @@ function renderVerify(){
     d.querySelector('.vc').textContent='コントラクト: '+g.contract;
     var msgs=[];
     if(g.dropped>0) msgs.push('持っていないため外した物：'+g.dropped+' 件');
-    if(g.owned.length===0) msgs.push('この契約のNFTは、今は持っていません。');
+    if(g.failed>0) msgs.push('確認できませんでした：'+g.failed+' 件（通信の失敗の可能性があります。持っていないとは限りません）');
+    if(g.owned.length===0 && g.failed===0) msgs.push('この契約のNFTは、今は持っていません。');
     d.querySelector('.vd').textContent=msgs.join('　');
     var cb=d.querySelector('input');
     cb.checked=g.checked; cb.disabled=(g.owned.length===0);
@@ -934,6 +1036,8 @@ $('manualBtn').addEventListener('click', function(){
   var addr = $('addr').value.trim();
   if(!/^0x[0-9a-fA-F]{40}$/.test(addr)){ showErr('nftErr','先にステップ1で被害ウォレットのアドレスを入力してください。'); return; }
   if(current!=='polygon'){ showErr('nftErr','照合はPolygonのみ対応です。チェーンをPolygonにしてください。'); return; }
+  var ticket=readTicket('nfts',addr);
+  verifyGroups=[]; renderVerify(); W.nfts=[]; W.listAddr=null; renderNfts();
   var lines=$('manualNfts').value.split('\n'), rows=[], bad=0, seen={};
   lines.forEach(function(line){
     line=line.trim(); if(!line) return;
@@ -958,47 +1062,54 @@ $('manualBtn').addEventListener('click', function(){
   function callEth(to, data){ return rpcCall(LOG_RPCS,'eth_call',[{to:to,data:data},'latest']); }
   function checkOne(row){
     var idHex;
-    try{ idHex=pad256(BigInt(row.tokenId).toString(16)); }catch(e){ return Promise.resolve({row:row, owned:false, type:row.type||'ERC721'}); }
+    var tid=tokenNumber(row.tokenId); if(tid===null) return Promise.resolve({row:row, owned:false, unknown:true, type:row.type||'ERC721'});
+    idHex=pad256(tid.toString(16));
     var ownerData='0x6352211e'+idHex;
     var balData='0x00fdd58e'+pad256(addr.toLowerCase())+idHex;
-    function as721(){ return callEth(row.contract, ownerData).then(function(r){ return !!r && r!=='0x' && ('0x'+r.slice(-40)).toLowerCase()===addr.toLowerCase(); }).catch(function(){ return false; }); }
-    function as1155(){ return callEth(row.contract, balData).then(function(r){ if(!r || r==='0x') return false; try{ return BigInt(r)>0n; }catch(e){ return false; } }).catch(function(){ return false; }); }
+    /* 照合結果は3通り: 'owned'=本人の保有を確認できた / 'not'=持っていないことを確認できた（有効なゼロ残高・他人の所有が返った場合だけ） / 'fail'=未確認（通信エラー・空の戻り値・形式不正など）。'fail' を 'not' と混ぜないこと */
+    function as721(){ return callEth(row.contract, ownerData).then(function(r){ if(!ownerWord(r)) return 'fail'; return (('0x'+r.slice(-40)).toLowerCase()===addr.toLowerCase())? 'owned': 'not';}).catch(function(){ return 'fail';});}
+    function as1155(){ return callEth(row.contract, balData).then(function(r){ if(!uintWord(r)) return 'fail'; return BigInt(r)>0n? 'owned': 'not';}).catch(function(){ return 'fail';});}
     var seq;
-    if(row.type==='ERC1155'){ seq=as1155().then(function(ok){ return {t:'ERC1155', ok:ok}; }); }
-    else if(row.type==='ERC721'){ seq=as721().then(function(ok){ return {t:'ERC721', ok:ok}; }); }
-    else { seq=as721().then(function(ok){ if(ok) return {t:'ERC721', ok:true}; return as1155().then(function(ok2){ return {t:(ok2?'ERC1155':'ERC721'), ok:ok2}; }); }); }
-    return seq.then(function(res){ return {row:row, owned:res.ok, type:res.t}; });
+    if(row.type==='ERC1155'){ seq=as1155().then(function(st){ return {t:'ERC1155', st:st};});}
+    else if(row.type==='ERC721'){ seq=as721().then(function(st){ return {t:'ERC721', st:st};});}
+    else { seq=as721().then(function(st1){ if(st1==='owned') return {t:'ERC721', st:'owned'}; return as1155().then(function(st2){ if(st2==='owned') return {t:'ERC1155', st:'owned'}; return {t:'ERC721', st:((st1==='fail'||st2==='fail')?'fail':'not')};});});}
+    return seq.then(function(res){ return {row:row, owned:(res.st==='owned'), unknown:(res.st==='fail'), type:res.t};});
   }
   var idx=0;
   function worker(){
-    if(idx>=rows.length) return Promise.resolve();
+    if(!readCurrent(ticket) || idx>=rows.length) return Promise.resolve();
     var i=idx++;
-    return checkOne(rows[i]).then(function(r){ results[i]=r; done++; if(done%10===0||done===rows.length){ setStatus('verifyStatus','照合中です… '+done+' / '+rows.length+' 件',''); } return worker(); });
+    return checkOne(rows[i]).then(function(r){ results[i]=r; done++; if(readCurrent(ticket) && (done%10===0||done===rows.length)){ setStatus('verifyStatus','照合中です… '+done+' / '+rows.length+' 件',''); } return worker(); });
   }
   var workers=[]; for(var k=0;k<6;k++){ workers.push(worker()); }
   Promise.all(workers).then(function(){
+    if(!readCurrent(ticket)) return null;
     var order=[], map={};
     results.forEach(function(r){
       var c=r.row.contract.toLowerCase();
-      if(!map[c]){ map[c]={contract:r.row.contract, name:'', owned:[], dropped:0, checked:false}; order.push(map[c]); }
-      if(r.owned){ r.row.type=r.type; map[c].owned.push(r.row); } else { map[c].dropped++; }
+      if(!map[c]){ map[c]={contract:r.row.contract, name:'', owned:[], dropped:0, failed:0, checked:false}; order.push(map[c]); }
+      if(r.owned){ r.row.type=r.type; map[c].owned.push(r.row); } else if(r.unknown){ map[c].failed++; } else { map[c].dropped++; }
     });
-    verifyGroups=order;
     return Promise.all(order.map(function(g){
       return callEth(g.contract,'0x06fdde03').then(function(r){ g.name=decodeAbiString(r); }).catch(function(){});
-    }));
-  }).then(function(){
-    btn.disabled=false;
+    })).then(function(){ return order; });
+  }).then(function(order){
+    if(!order || !readCurrent(ticket)) return;
+    verifyGroups=order;
+    W.listAddr=addr;
     renderVerify();
     rebuildFromVerify();
     var ownedTotal=verifyGroups.reduce(function(a,g){ return a+g.owned.length; },0);
-    setStatus('verifyStatus','<strong>照合が終わりました。</strong>'+rows.length+' 件を調べ、<strong>'+ownedTotal+' 件</strong>が「今も本人が持っている」物でした。'+(bad>0?(' 形式が違って読み込めなかった行：'+bad+' 行。'):''),'on');
+    var failedTotal=verifyGroups.reduce(function(a,g){ return a+(g.failed||0);},0);
+    setStatus('verifyStatus','<strong>照合が終わりました。</strong>'+rows.length+' 件を調べ、<strong>'+ownedTotal+' 件</strong>が「今も本人が持っている」物でした。'+(failedTotal>0?(' <strong class="crit">確認できなかった物：'+failedTotal+' 件</strong>（通信の失敗の可能性があります。持っていないとは限りません）。通信の状態を確認して、もう一度「照合してリストに入れる」を押してください。'):'')+(bad>0?(' 形式が違って読み込めなかった行：'+bad+' 行。'):''), failedTotal>0?'warn':'on');
   }).catch(function(){
-    btn.disabled=false;
-    showErr('nftErr','照合できませんでした。通信の状態を確認して、もう一度押してください。');
-  });
+    if(readCurrent(ticket)) showErr('nftErr','照合できませんでした。通信の状態を確認して、もう一度押してください。');
+  }).finally(function(){ btn.disabled=false; });
 });
 $('csvBtn').addEventListener('click', function(){
+  var addrNow=$('addr').value.trim();
+  if(!W.nfts || W.nfts.length===0){ showErr('nftErr','リストが空です。先に方法Aの照合か方法Bの取得を行い、心当たりがある契約にチェックを入れてください。'); return; }
+  if(current!=='polygon' || !W.listAddr || W.listAddr.toLowerCase()!==addrNow.toLowerCase()){ showErr('nftErr','このリストは、今入力されているアドレスとは別のアドレスで作られています。アドレスを確認して、照合からやり直してください。'); return; }
   var csv='contract,tokenId,type,name\n'+W.nfts.map(function(n){ return n.contract+','+n.tokenId+','+n.type+',"'+String(n.name||'').replace(/"/g,'""')+'"'; }).join('\n');
   download('nfts.csv', csv, 'text/csv');
 });
@@ -1118,6 +1229,15 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
 /* ---------- Step 3: pattern choice ---------- */
 (function(){
   var rec=$('choiceRecommend'); if(!rec) return;
+  var ans=null;
+  function diagState(){
+    var v=$('verdict');
+    if(!v) return null;
+    if(v.classList.contains('danger')) return 'unknown';
+    if(v.classList.contains('warn')) return 'official';
+    if(v.classList.contains('ok')) return 'none';
+    return null;
+  }
   function setRec(inner, targetId){
     rec.innerHTML='<span class="dot"></span><span>'+inner+'</span>';
     var a=$('patternA'), b=$('patternB');
@@ -1126,9 +1246,27 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
     var t=targetId?$(targetId):null;
     if(t) t.style.outline='3px solid var(--amber)';
   }
+  function clearRec(){
+    rec.innerHTML='';
+    var a=$('patternA'), b=$('patternB');
+    if(a) a.style.outline='';
+    if(b) b.style.outline='';
+  }
+  function update(){
+    var d=diagState();
+    if(!ans){ clearRec(); return; }
+    if(!d){ setRec('まずステップ1でウォレットを診断してください。', null); return; }
+    if(d==='unknown' || ans==='yes'){ setRec('このケースではパターンBは案内しません。ガイドの次の確認へ進んでください。','patternA'); return; }
+    if(d==='none'){ setRec('委任は見つかりませんでした。委任を外す操作は不要です。', null); return; }
+    setRec('パターンBで委任を外す方法を確認できます。','patternB');
+  }
   var y=$('qYes'), n=$('qNo');
-  if(y) y.addEventListener('click', function(){ setRec('→ <strong>パターンA</strong>がおすすめです。鍵が漏れている前提で、資産を新しいウォレットへ移しましょう。','patternA'); });
-  if(n) n.addEventListener('click', function(){ setRec('→ まず<strong>パターンB</strong>を試すのがおすすめです（委任だけを外します）。外れなかった場合や、NFTも移したい場合はパターンAを使ってください。','patternB'); });
+  if(y) y.addEventListener('click', function(){ ans='yes'; update(); });
+  if(n) n.addEventListener('click', function(){ ans='no'; update(); });
+  var addrEl=$('addr'); if(addrEl) addrEl.addEventListener('input', function(){ ans=null; clearRec(); });
+  document.querySelectorAll('.chain').forEach(function(b){ b.addEventListener('click', function(){ ans=null; clearRec(); }); });
+  var vc=$('verdict');
+  if(vc && window.MutationObserver){ new MutationObserver(function(){ update(); }).observe(vc, { attributes:true, attributeFilter:['class'] }); }
 })();
 </script></script>
 
@@ -1157,9 +1295,9 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
     {sec:'step2', el:'#nftBtn', text:'方法Bの人だけ「NFTを取得する →」を押して（方法Aの人は押さずに次へ）'},
     {sec:'step3', el:'#dlKitBtn', key:'a1', text:'パターンA：まず「専用キット（ZIP）をダウンロード」を押して'},
     {sec:'step3', el:'#patternA', key:'a2', text:'ダウンロードしたZIPを右クリック→「すべて展開」で解凍して、中の READ_FIRST.txt（まず読んでください）を開いて読んで'},
-    {sec:'step3', el:'#patternA', key:'a3', text:'START.bat をダブルクリック（青い画面が出たら「詳細情報」→「実行」）。ここからはキットの黒い画面が1つずつ聞いてくるので、答えていってください。キットが終わったら、このページに戻って「次へ →」を押して'},
+    {sec:'step3', el:'#patternA', key:'a3', text:'START.bat をダブルクリック（警告が出たら、その場では実行しないで。警告の種類とファイル名を確認して。ウイルス検出の警告なら実行しない。「発行元不明」の警告なら、ZIPの中の「まず読んでください」の手順で、このページのSHA-256と一致するか、配布元が公式かを確認して。一致しても安全の保証ではありません）。ここからはキットの黒い画面が1つずつ聞いてくるので、答えていってください。キットが終わったら、このページに戻って「次へ →」を押して'},
     {sec:'step3', el:'#patternB', key:'b1', text:'パターンB：ここに書いてある通りに、MetaMaskで委任のスイッチをオフにして'},
-    {sec:'step1', el:'#runBtn', key:'fin', text:'最後の確認：「確認する →」をもう一度押して、委任が消えていれば終わりです'}
+    {sec:'step1', el:'#runBtn', key:'fin', text:'最後の確認：「確認する →」をもう一度押して、委任が消えているか見て。委任が消えていても、NFTの回収が終わったかどうかは、キットの画面の結果で確かめてください。キットで失敗や結果不明があった場合は、終わりではありません（キットの案内に従って、状態の確認から再開してください）'}
   ];
   var mode='guide', gi=0;
   var head=document.createElement('div'); head.className='gd-head';
@@ -1199,7 +1337,7 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
         else if(dg==='none') txt='確認の結果：委任は付いていませんでした。秘密鍵を教えた・怪しいサイトに入力した心当たりがある人は「ある・わからない」、ない人は「ない」を押して。押したら「次へ →」';
         else txt='先にステップ1で「確認する →」を押して、結果を出してください（「← 戻る」で戻れます）。結果と、この質問の答えで進み方が決まります';
       }
-      if(item.key==='fin' && route()==='OK') txt='あなたは「問題なし」の場合でした。救出は要りません。このページを閉じて大丈夫です';
+      if(item.key==='fin' && route()==='OK') txt='委任については問題ありませんでした。ただし、ステップ1.5「許可の棚卸し」の確認がまだの人や、確認できなかった許可がある人は、そちらも必ず見てください。許可が残っている場合は、この限りではありません';
       document.getElementById('gdText').textContent=txt;
       document.getElementById('gdBack').disabled = (gi===0);
       document.getElementById('gdNext').textContent = (gi===GUIDE.length-1) ? '完了（全部表示に戻る）' : '次へ →';
@@ -1235,8 +1373,11 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
   var qy=document.getElementById('qYes'), qn=document.getElementById('qNo');
   if(qy) qy.addEventListener('click', function(){ ans='yes'; });
   if(qn) qn.addEventListener('click', function(){ ans='no'; });
+  var addrEl=document.getElementById('addr'); if(addrEl) addrEl.addEventListener('input', function(){ ans=null; });
+  document.querySelectorAll('.chain').forEach(function(b){ b.addEventListener('click', function(){ ans=null; }); });
   function route(){
     var d=diagState();
+    if(!d) return null;
     if(d==='unknown') return 'A';
     if(ans==='yes') return 'A';
     if(ans===null) return null;
@@ -1248,7 +1389,7 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
     if(gi>=GUIDE.length-1){ mode='showall'; render(); return; }
     var k=GUIDE[gi].key;
     if(k==='q'){ var r=route(); if(r===null){ render(); return; } gi = (r==='A') ? idxOf('n1') : (r==='B') ? idxOf('b1') : idxOf('fin'); }
-    else if(k==='n4'){ gi = idxOf('a1'); }
+    else if(k==='n4'){ gi++; }
     else if(k==='a3'){ gi = idxOf('fin'); }
     else { gi++; }
     render();
@@ -1257,7 +1398,7 @@ if(recheckBtn){ recheckBtn.addEventListener('click', async function(){
     if(gi<=0) return;
     var k=GUIDE[gi].key;
     if(k==='n1' || k==='b1'){ gi = idxOf('q'); }
-    else if(k==='a1'){ gi = idxOf('n4'); }
+    else if(k==='a1'){ gi = idxOf('a1')-1; }
     else if(k==='fin'){ var r=route(); gi = (r==='B') ? idxOf('b1') : (r==='OK') ? idxOf('q') : idxOf('a3'); }
     else { gi--; }
     render();
